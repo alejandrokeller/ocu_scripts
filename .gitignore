@@ -1,0 +1,8 @@
+logs/**
+logs/status/**
+logs/scripts/**
+data/events/**
+data/**
+*.pyc
+config.ini
+launchers/config

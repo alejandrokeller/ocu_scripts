@@ -1,0 +1,4 @@
+# Variables required for launchers
+today=`date '+%Y%m%d'`
+# Newest generated datafile
+file1="$(ls -t /home/pi/ocu/data/* | head -1)"
