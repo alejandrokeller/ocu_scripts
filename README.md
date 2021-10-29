@@ -5,7 +5,7 @@
 ### **Installation**
 1. Clone repository, setting the branch to **ocu** and the destination folder to either `/logger` or to a directory of your preference:
 ```bash
-$ sudo git clone --branch ocu https://github.com/alejandrokeller/FATCAT-scripts /logger
+$ sudo git clone https://github.com/alejandrokeller/ocu_scripts /logger
 ```
 2. Travel to cloned folder:
 ```bash
