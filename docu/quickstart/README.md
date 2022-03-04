@@ -238,7 +238,7 @@ Follow this steps:
 
 ## Coating of Particles with Secondary Organic Matter
 
-See Kalbermatter et al. (2022)[^7] for an example application of coating soot with SOA from α-pinene and sample set-points for this unit.
+See Kalbermatter et al. (2022)[^8] for an example application of coating soot with SOA from α-pinene and sample set-points for this unit.
 
 |![Soot coating experiment](mermaid-ocu-coated-soot.png)|
 |:--:|
@@ -362,4 +362,4 @@ Follow this procedure procedure for lamp replacement:
 [^4]: Alphasense [introduction to photoionization detection (PID)](https://www.alphasense.com/wp-content/uploads/2013/07/AAN_301-04.pdf)
 [^5]: Alphasense [Photoionization Detector application notes](https://www.alphasense.com/downloads/application-notes/)
 [^6]: Alphasense [PID A12 Datasheet](https://www.alphasense.com/wp-content/uploads/2019/08/PID-A12-1.pdf)
-[^7]: Comparing black-carbon- and aerosol-absorption-measuring instruments – a new system using lab-generated soot coated with controlled amounts of secondary organic matter [Kalbermatter et al. (2022)](https://amt.copernicus.org/articles/15/561/2022/)
+[^8]: Comparing black-carbon- and aerosol-absorption-measuring instruments – a new system using lab-generated soot coated with controlled amounts of secondary organic matter [Kalbermatter et al., Atmos. Meas. Tech., 15, 561–572, 2022](https://amt.copernicus.org/articles/15/561/2022/)
