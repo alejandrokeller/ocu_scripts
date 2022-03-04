@@ -21,10 +21,11 @@
     + [5. VOC Flow](#5-voc-flow)
   * [Serial Commands](#serial-commands)
   * [Accessing the log files](#accessing-the-log-files)
-- [Frontpanel operation](#frontpanel-operation)
+- [Frontpanel operation](#frontpa-operation)
 - [Experimental Setup](#experimental-setup)
   * [Generation of Pure Secondary Organic Matter Particles by Homogeneous Nucleation](#generation-of-pure-secondary-organic-matter-particles-by-homogeneous-nucleation)
   * [Coating of Particles with Secondary Organic Matter](#coating-of-particles-with-secondary-organic-matter)
+  * [Some considerations for finding the appropiate setpoint](#some-considerations-for-finding-the-appropiate-setpoint)
   * [Calibrating the photoionization detector (PID)](#calibrating-the-photoionization-detector-pid)
     + [Baseline](#baseline)
     + [Signal span](#signal-span)
@@ -264,11 +265,11 @@ Follow this steps:
  
 `Steps 8 and 9 should be performed with humid air after experiements with substances that require humidity (e.g. 1,3,5-trimethylbenzene or Toluene).`
 
-### Some considerations for finding the approrpiate setpoint
+## Some considerations for finding the appropiate setpoint
 
 1. Try to aproach the setpoint from low to high VOC concentrations. This is faster than the other way around due to accumulation of VOC on the lines and/or reactor walls (see cleanning steps in the previous sections).
-2. **High volatility substances or very low dosing:** The mass flow controllers have a flow range from 2 to 100 ml/minute. Depending on the substance you are using and the desired results, the smallest possible flow may be already dosing too much VOC. In this case, you can cool down the VOC container in, e.g., an ice bad to reduce the gasphase inside the bottle.
-3. Alternativelly to point 2, you can also reduce the UV light intensity by turning off the UV lamps of the reactor one at the time. This will reduce thegeneration of ozone and slow down the formation of SOA. It is, however, recommended that you always clean the reactor with all 5 lamps turned on.
+2. **High volatility substances or very low dosing:** The mass flow controllers have a flow range from 2 to 100 ml/minute. Depending on the substance you are using and the desired results, the smallest possible flow may be already dosing too much VOC. In this case, you can cool down the VOC container in, e.g., an ice bad to reduce the gas-phase inside the bottle.
+3. Alternativelly to point 2, reduce the UV light intensity by turning off the UV lamps of the reactor one at the time to decrease ozone concentration in the reactor. This slows down the formation of SOA. It is, however, recommended that you always clean the reactor with all 5 lamps turned on.
 4. **Low volatility substances or high dosing:** Some substances may require you to heat up the bottle in order to shift the VOC partition to the gas-phase. We currently do not have a standard solution for this. If you build one, consider also heating up the tube that connects the bottle to the OCU to avoid condensation. The line is heated inside the OCU by the VOC-heater function up to a maximum temperature of *T*<sub>VOC</sub>=80°C. 
 
 ## Calibrating the photoionization detector (PID)
