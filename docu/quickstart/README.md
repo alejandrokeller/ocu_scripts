@@ -64,6 +64,8 @@ This document is ongoing and will be updated regularly. Please feel free to cont
 5. Recommended: Festo blanking plugs for 6mm outer diameter tube (part Nr. QSC-6H)
 6. Recommended: Reference isobutylene (C<sub>4</sub>H<sub>8</sub>) gas mixture (e.g. 100 ppm Isobutylene, synthetic air rest) for calibration purposes.
 7. Optional: Ultra pure water (e.g. Milli-Q) for humidity experiments
+8. Optional: Replacement tubbing for connecting the VOC bottles to the OCU. We use *FLEXILON FEP*[^9] semi-rigid tubes (external diameter 6mm, internal diameter 3mm).
+9. Recommended: Replacement bottles for VOC.
 
 ## 1. Purging the oxidation flow reactor
 
@@ -370,3 +372,4 @@ Follow this procedure procedure for lamp replacement:
 [^5]: Alphasense [Photoionization Detector application notes](https://www.alphasense.com/downloads/application-notes/)
 [^6]: Alphasense [PID A12 Datasheet](https://www.alphasense.com/wp-content/uploads/2019/08/PID-A12-1.pdf)
 [^8]: Comparing black-carbon- and aerosol-absorption-measuring instruments – a new system using lab-generated soot coated with controlled amounts of secondary organic matter [Kalbermatter et al., Atmos. Meas. Tech., 15, 561–572, 2022](https://amt.copernicus.org/articles/15/561/2022/)
+[^9]: [Flexicon FEP hoses](https://www.apsoparts.com/de-CH/12020101-flexilon-fep-kunststoffrohr.html)
