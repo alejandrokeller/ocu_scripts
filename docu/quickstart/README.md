@@ -214,6 +214,8 @@ By default, the generated log files can be found under `~/ocu/data` (unless you 
 
 If you have follow the previous steps, you should be able to start the system and the GUI, send commands to the OCU, and log the system variables. Now you can connect the OCU to your experimental setup.
 
+## 
+
 ## Generation of Pure Secondary Organic Matter Particles by Homogeneous Nucleation
 
 |![Homogeneous nucleation experiment](mermaid-ocu-SOM.png)|
@@ -225,13 +227,18 @@ The figure above shows a suggested experimental setup for generating pure SOM pa
 Install your sampling or characterization equipment downstream of the front outlet. Keep in mind that the OCU produces a high number concentration of particles, typically of the order of *N*\~10<sup>8</sup> #/cc, and thus you may need to use a dilution system to achieve a concentration that is appropiate for your experiement.
 
 Follow this steps:
+0. For best reproducibility, we recommend to perform regular calibration of the PID signals. We even recommend a if the previous experiement included high levels of seed aerosol (e.g. soot particles) that reduce the PID sensor response.  
 1. Start by turning on the OCU, setting the PID1 and PID2 pump flow to 0.5 lpm, and turning the PID sensors and the OFR on. Wait for the system temperature to stabilize, this may take around 20 minutes if you turned the device on for the first time on that day. We recommend to also turn on the VOC heater and set an apprpriate temperature (e.g. *T*<sub>VOC</sub>=60°C), this will reduce the response time of the instrument when changing the target VOC concentration and will help to clean the lines after the experiment is over.
 2. If using humidity, configure the inlet and prepare the humidifier as described [above](#4-humidifier). Set the humidity target and start the humidifier using the graphical interface. Keep in mind that the relative humidity target is referenced to the inlet temperature (showed at the top of the graphical interface), which may be different to the ambient temperature. This can cause water condensation in the device or at the inlet if the target humidity is very high. Avoid this by making the appropriate conversion. Humidity will promote the formation of hydroxyl form the ozone generated in the OFR, thus openning further reaction paths. Some VOCs, e.g. Toluene or Mesitylene, will only generate SOM if you use humidity.
 3. If you are using VOC free air, the baseline of the PID reading is now your zero point. You can now set a target VOC concentration (in milli volts). Wait for the system to stabilize at the target concentration. The conversion of the milli volt signal to parts per million must be established through [calibration](#calibrating-the-photoionization-detector).
 4. Increase the VOC concentration, the light intensity or reduce the flow through the OFR to achieve larger particles. Conversily, lower VOC concentrations, lower light intensity or faster OFR flow will decrease the particle size.
 5. Once you finish your experiment, set the target VOC concentration to zero and wait for the system to purge the VOC residuals. This will be faster if you increase the VOC heater temperature. You may turn off the PID sensors at this point to increase sensor lifetime. However, we do not recomment to turn the OFR off until the system is purged. This will prevent deposition of the precursor substance on the OFR and reduce your cleanning/wait time for the next experiment.
 
+**Step 5 should be performed with humid air after experiements with substances that require humidity (e.g. 1,3,5-trymethilbenzene or Toluene).**  
+
 ## Coating of Particles with Secondary Organic Matter
+
+See Kalbermatter et al. (2022)[^7] for an example application of coating soot with SOA from α-pinene and sample set-points for this unit.
 
 |![Soot coating experiment](mermaid-ocu-coated-soot.png)|
 |:--:|
@@ -242,14 +249,21 @@ The figure above shows a suggested experimental setup for generating soot partic
 The OCU is dimensioned for high particle concentrations, like undiluted MiniCAST soot. Low dilution levels of the order of, e.g., 10x may also be acceptable. However, the fast formation of SOM in the OFR will cause new particle formation through homogeneous nucleation at low concentration of seed particles. 
 
 Follow this steps:
+
+0. For best reproducibility, we recommend to perform regular calibration of the PID signals. We even recommend a if the previous experiement included high levels of seed aerosol (e.g. soot particles) that reduce the PID sensor response.
 1. Start by turning on the OCU, setting the PID1 and PID2 pump flow to 0.5 lpm, and turning the PID sensors and the OFR on. Wait for the system temperature to stabilize, this may take around 20 minutes if you turned the device on for the first time on that day. We recommend to also turn on the VOC heater and set an apprpriate temperature (e.g. *T*<sub>VOC</sub>=60°C), this will reduce the response time of the instrument when changing the target VOC concentration and will help to clean the lines after the experiment is over.
 2. If using humidity, configure the inlet and prepare the humidifier as described [above](#4-humidifier). Set the humidity target and start the humidifier using the graphical interface. Keep in mind that the relative humidity target is referenced to the inlet temperature (showed at the top of the graphical interface), which may be different to the ambient temperature. This can cause water condensation in the device or at the inlet if the target humidity is very high. Avoid this by making the appropriate conversion. Humidity will promote the formation of hydroxyl form the ozone generated in the OFR, thus openning further reaction paths. Some VOCs, e.g. Toluene or Mesitylene, will only generate SOM if you use humidity.
 3. Start the production of seed particles, e.g. miniCAST soot, and wait until the device stabilizes. This can also be done in parallel to the previous steps.
 4. Take note the baseline of PID reading, this zero point may be different to the zero point determined through [calibration](#calibrating-the-photoionization-detector) due to the composition of the carrier gas. Furthermore, depending on the particle source, you may reuquire a denuder to remove the gas-phase VOCs of the source and prevent them from generating SOM.
 5. Set a target VOC concentration (in milli volts). Wait for the system to stabilize at the target concentration. The conversion of the milli volt signal to parts per million must be established through [calibration](#calibrating-the-photoionization-detector).
 6. Increase the VOC concentration, the light intensity or reduce the flow through the OFR to increase coating thickness. Conversily, lower VOC concentrations, lower light intensity or faster OFR flow to decrease coating. The coating process is limited by the available surface from the primary particles. For instance, homogeneous nuclation will compete with the coating of particles at low surface concentration or high precursor concentration. At very high surface concentration, the OCU may only be able to achieve a thin coating. You will need to experiment with your source of primary particles to achieve the optimum level of dilution.   
-7. Once you finish your experiment, change the seed particle source to a clean air source to start the cleaning process and set the target VOC concentration to zero and wait for the system to purge the VOC residuals. This will be faster if you increase the VOC heater temperature. You may turn off the PID sensors at this point to increase sensor lifetime. However, we do not recomment to turn the OFR off until the system is purged. This will prevent deposition of the precursor substance on the OFR and reduce your cleanning/wait time for the next experiment.
+7. Once you finish your experiment, change the seed particle source to a clean air source to start the cleaning process and set the target VOC concentration to zero and wait for the system to purge the VOC residuals. This will be faster if you increase the VOC heater temperature (maximum value is *T*<sub>VOC</sub>=80°C). You may turn off the PID sensors at this point to increase sensor lifetime. However, we do not recomment to turn the OFR off until the system is purged. This will prevent deposition of the precursor substance on the OFR and reduce your cleanning/wait time for the next experiment.
+ 
+**Step 7 should be performed with humid air after experiements with substances that require humidity (e.g. 1,3,5-trymethilbenzene or Toluene).**  
 
+### Some considerations for finding the approrpiate setpoint
+
+Comming soon...
 
 ## Calibrating the photoionization detector (PID)
 
@@ -304,7 +318,7 @@ Follow this steps:
 Follow this steps:
 1. Perform the baseline determination as described in the [previos section](#signal-span).
 2. Switch from synthetic air (VOC free air) to a mixture of the reference gas.
-3. Control the PID signal on the user interface to see if it is still drifting. Wait for the signal to stabilize. This process should be fast if the system is already at a stable temperature. 
+3. Control the PID signal on the user interface to see if it is still drifting. Wait for the signal to stabilize. This process should be fast if the system is already at a stable temperature (still, we recomend to wait 2 to 3 minutes to be on the safe side when going from the zero gas mixture to, e.g., 100ppm Isobutylene). 
 4. Take note of the PID reading and substract the baseline to determine the span for the reference gas mixture.
 
 
@@ -348,3 +362,4 @@ Follow this procedure procedure for lamp replacement:
 [^4]: Alphasense [introduction to photoionization detection (PID)](https://www.alphasense.com/wp-content/uploads/2013/07/AAN_301-04.pdf)
 [^5]: Alphasense [Photoionization Detector application notes](https://www.alphasense.com/downloads/application-notes/)
 [^6]: Alphasense [PID A12 Datasheet](https://www.alphasense.com/wp-content/uploads/2019/08/PID-A12-1.pdf)
+[^7]: Comparing black-carbon- and aerosol-absorption-measuring instruments – a new system using lab-generated soot coated with controlled amounts of secondary organic matter [Kalbermatter et al. (2022)](https://amt.copernicus.org/articles/15/561/2022/)
