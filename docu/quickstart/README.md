@@ -60,12 +60,11 @@ This document is ongoing and will be updated regularly. Please feel free to cont
 1. Precursor VOC (e.g. α-pinene)
 2. High purity VOC-Free Synthetic air (e.g., Carbagas ALPHAGAZ™ 1)
 3. Flow controller capable of delivering 2 lpm (e.g., Mass flow controller, critical orifice, etc.)
-4. Recommended: Innert gas (e.g. N<sub>2</sub>) for purging of the oxidation flow reactor
-5. Recommended: Festo blanking plugs for 6mm outer diameter tube (part Nr. QSC-6H)
-6. Recommended: Reference isobutylene (C<sub>4</sub>H<sub>8</sub>) gas mixture (e.g. 100 ppm Isobutylene, synthetic air rest) for calibration purposes.
-7. Optional: Ultra pure water (e.g. Milli-Q) for humidity experiments
-8. Optional: Replacement tubbing for connecting the VOC bottles to the OCU. We use *FLEXILON FEP*[^9] semi-rigid tubes (external diameter 6mm, internal diameter 3mm).
-9. Recommended: Replacement bottles for new VOC precursors (25ml, 70mm height, 36mm diameter, GL25 thread)[^10].
+4. Recommended: Festo blanking plugs for 6mm outer diameter tube (QSC-6H Part number: 153268)
+5. Recommended: Reference isobutylene (C<sub>4</sub>H<sub>8</sub>) gas mixture (e.g. 100 ppm Isobutylene, synthetic air rest) for calibration purposes.
+6. Optional: Ultra pure water (e.g. Milli-Q) for humidity experiments
+7. Optional: Replacement tubbing for connecting the VOC bottles to the OCU. We use *FLEXILON FEP*[^9] semi-rigid tubes (external diameter 6mm, internal diameter 3mm).
+8. Recommended: Replacement bottles for new VOC precursors (25ml, 70mm height, 36mm diameter, GL25 thread)[^10].
 
 ## 1. Purging the oxidation flow reactor
 
@@ -303,7 +302,7 @@ The following table provides an extract of the correction factor list by Alphase
 |910|Water| dihydrogen monoxide | H2O | 12.61 | NR |
 |913|Xylene, m-|                                  |C8H10|8.56|0.54|
 
-Given the broad range of detection of the PID sensors, we have decided to always store the signal based on the signal, *V*, in milli volts that is provided by the sensor. We do not correct for gas species or substract the baseline, *V*<sub>0</sub>. It is left to the user to perform this calibration and determine the required frequency for this task. In the following examples, we use a PID flow of *f*<sub>PID</sub>=0.5 lpm. Nevertheless, it is possible to operate the instruments using a different PID flowrate. The calibration should be performed at the flowrate that will be used during the experiments.
+Given the broad range of detection of the PID sensors, we have decided to always store the signal based on the signal, *V*, in milli volts that is provided by the sensor. We do not correct for gas species or substract the baseline, *V*<sub>0</sub>. It is left to the user to perform this calibration and determine the required frequency for this task. **For instance, experiments performed for several hours under high soot concentration (e.g., undiluted CAST Soot) require daily calibration as the soot accumulates on the PID sensor and lowers its response.** In the following examples, we use a PID flow of *f*<sub>PID</sub>=0.5 lpm. Nevertheless, it is possible to operate the instruments using a different PID flowrate. **The calibration should be performed at the flowrate that will be used during the experiments.**
 
 For simplicity, we recommend the use of isobutylene as a universal reference gas due to the fact that the manufacturer lists correction factors in terms of this substance. **Nevertheless, these are approximate values, so for best accuracy you should calibrate with the relevant VOC**. Furthermore, the span determination should be performed at a concentration which is relevant for the experiment. We recommend to start with a *c*<sub>C4H8</sub>=100ppm mixture, although some experiments may require lower concentrations.  On the high concentration side, the A12 PID sensors are rated at a maximum of *c*<sub>C4H8</sub>=4000ppm. The correction factor from the manufacturer also provides a limit of detection for specific substances (see the A12 version of the sensor).
 
@@ -314,10 +313,11 @@ For simplicity, we recommend the use of isobutylene as a universal reference gas
 |*Suggested configuration for the baseline determination of the photoionization detectors PID1 and PID2. MFC1 and MFC2 correspond to mass flow controllers, connected to the dosing gas inlets on the back of the unit, that provide the dosing air for the two VOC bottles (i.e. VOC1 and VOC2), and OFR is the oxidation flow reactor. The thick arrows show the main experimental path, from the inlet in the front to the outlet after the oxidation flow reactor.*|
 
 Follow this steps:
-1. Start by turning on the OCU, setting the PID1 and PID2 pump flow to 0.5 lpm, and turning the PID sensors. For calibration purposes, the OFR, VOC heater, and humidifier may remain off during the calibration process.
-2. Start the flow of synthetic air (VOC free air) through the OCU.
-3. Wait for the system temperature to stabilize, this may take around 20 minutes if you turned the device on for the first time on that day.  Control the PID signal on the user interface to see if it is still drifting. Wait for the signal to stabilize.
-3. Take note of the baseline of PID reading, this is your zero point. You can now proceed to change the air source to the reference gas mixture.
+1. Start by turning on the OCU, setting the PID1 and PID2 pump flow to the desired value (e.g., 0.5 lpm), and turning on the PID sensors. For calibration purposes, the VOC heater, and humidifier may remain off during the calibration process. We recommend, however that the OFR is on in order to have the same internal temperature in the OCU as the experimental conditions during particle coating or particle nuclation experiements. 
+2. Make sure that the dosing gas inlets behind the device are either closed (e.g., with a Festo 6mm blanking plug) or connected to a VOC free gas line. 
+3. Start the flow of synthetic air (VOC free air) through the OCU, for instance using an external mass flow controller or a critical orifice. The inlet flow should be higher than the sum of the 2 PID pumps flow. Ideally, the inlet flow should be the same as the target flow for the particle generation experiments (tipically 2lpm). 
+4. Wait for the system temperature to stabilize, this may take around 20 minutes if you turned the device on for the first time on that day. Control the PID signal on the user interface to see if it is still drifting. Wait for the signal to stabilize. If the device is already was already running as stable conditions, the stabilization will take less than 2 minutes.
+5. Take note of the baseline of PID reading, this is your zero point. You can now proceed to change the air source to the reference gas mixture.
 
 ### Signal span
 |![Isobutylene Span](mermaid-ocu-calibration.png)|
@@ -326,10 +326,9 @@ Follow this steps:
 
 Follow this steps:
 1. Perform the baseline determination as described in the [previos section](#signal-span).
-2. Switch from synthetic air (VOC free air) to a mixture of the reference gas.
-3. Control the PID signal on the user interface to see if it is still drifting. Wait for the signal to stabilize. This process should be fast if the system is already at a stable temperature (still, we recomend to wait 2 to 3 minutes to be on the safe side when going from the zero gas mixture to, e.g., 100ppm Isobutylene). 
+2. Switch from synthetic air (VOC free air) to a mixture of the reference gasv keeping the same flow rate. As in the previous step, you can use an external mass flow controller or a critical orifice.
+3. Control the PID signal on the user interface to see if it is still drifting. Wait for the signal to stabilize. This process should be fast if the system is already at a stable temperature. We recomend to wait 2 to 3 minutes to be on the safe side when going from the zero gas mixture to, e.g., 100ppm of Isobutylene. Much higher concentrations may require longer wait time. The A12 PID sensors are rated for concentrations up to 4000ppm of Isobutylene.  
 4. Take note of the PID reading and substract the baseline to determine the span for the reference gas mixture.
-
 
 # Mantainance
 
