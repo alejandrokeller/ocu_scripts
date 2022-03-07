@@ -229,6 +229,7 @@ The figure above shows a suggested experimental setup for generating pure SOM pa
 Install your sampling or characterization equipment downstream of the front outlet. Keep in mind that the OCU produces a high number concentration of particles, typically of the order of *N*\~10<sup>8</sup> #/cc, and thus you may need to use a dilution system to achieve a concentration that is appropiate for your experiement.
 
 Follow this steps:
+
 0. Before the experiment:
     1. For best reproducibility, we recommend to perform regular calibration of the PID signals. We even recommend a if the previous experiement included high levels of seed aerosol (e.g. soot particles) that reduce the PID sensor response.
     2. Set the correct date and time if your microcomputer is not connected to the network (details: [6. Configuring the microcomputer](#6-configuring-the-microcomputer)). This time is used for in the logfile. For this, press <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>t</kbd> to open a command line window and use the `sudo`and `date` linux commands (e.g., to set the date to the 7th of March 2022 at 9:17am use `sudo date -s '2022-03-07 09:17'` or `sudo date -s 'March 7 2022 09:17'`). The `date` command manual can be displayed using the `man date`.
