@@ -115,6 +115,15 @@ class Visualizer(object):
             "status",
             "lamps"
             ]
+        self.keys2 = [ # additional columns of version 2
+            "sb1",
+            "sb2",
+            "b1",
+            "b2",
+            "tec1",
+            "tec2",
+            "tecbyte"
+            ]
         self.functions = [
             float,  # runtime
             int,    # svoc1
@@ -137,6 +146,15 @@ class Visualizer(object):
             float,   # tbath
             hex2bin, # status
             hex2bin  # lamps
+            ]
+        self.functions2 = [ # additional columns of version 2
+            int,        # sb1
+            int,        # sb2
+            float,      # b1
+            float,      # b2
+            float,      # tec1
+            float,      # tec2
+            hex2bin     # tecbyte
             ]
         
         self.units = [
@@ -162,6 +180,20 @@ class Visualizer(object):
             '-',    # status
             '-'     # lamps
             ]
+        self.units2 = [ # additional columns of version 2
+            'degC', # sb1
+            'degC', # sb2
+            'degC', # b1
+            'degC', # b2
+            'degC', # tec1
+            'degC', # tec2
+            '-'     # tecbyte
+            ]
+
+        if self.device.model == 2:
+            self.keys.extend(self.keys2)
+            self.functions.extend(self.functions2)
+            self.units.extend(self.units2)
 
         self.unitsDict = dict(zip(self.keys, self.units))
         self.df = pd.DataFrame(columns=self.keys)
@@ -191,6 +223,25 @@ class Visualizer(object):
             "lamp0"
             ]
 
+        self.tecKeys = [
+            "tec15",
+            "tec14",
+            "tec13",
+            "tec12",
+            "tec11",
+            "tec10",
+            "tec09",
+            "tec08",
+            "tec07",
+            "tec06",
+            "tec05",
+            "tec04",
+            "tec03",
+            "tec02",
+            "tec01",
+            "tec00",
+            ]
+
         self.lampString = '00000'
         
         self.statusDict = {}
@@ -200,6 +251,10 @@ class Visualizer(object):
         self.lampDict = {}
         for k in self.lampKeys:
             self.lampDict[k] = 0
+
+        self.tecDict = {}
+        for k in self.tecKeys:
+            self.tecDict[k] = 0
 
         # setup plots
         self.pen = pg.mkPen('y', width=1)
@@ -460,6 +515,11 @@ class Visualizer(object):
                     if j > 2:
                         ## LampString has the most significant bit to the left
                         self.lampString = self.lampString + statusbyte[j]
+
+                if self.device.model == 2:
+                    statusbyte = newData['tecbyte']
+                    for k, j in zip(self.tecKeys, range(len(self.tecKeys))):
+                        self.tecDict[k] = int(statusbyte[j])
 
                 if self.statusDict['voc1']:
                     self.PIDcurves[0].setData(self.t, self.df['svoc1'])

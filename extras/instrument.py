@@ -21,6 +21,9 @@ class instrument(object):
             self.serial_bytesize         = eval(config['SERIAL_SETTINGS']['SERIAL_BYTESIZE'])
             self.serial_timeout          = eval(config['SERIAL_SETTINGS']['SERIAL_TIMEOUT'])
             self.uv_constant             = eval(config['CALIBRATION']['UV_CONSTANT'])
+            self.model                   = eval(config['GENERAL_SETTINGS']['MODEL'])
+            if not self.model:
+                self.model = 1
         else:
             self.log_message("INSTRUMENT", "Could not find the configuration file: " + config_file)
             exit()

@@ -1,6 +1,7 @@
 [GENERAL_SETTINGS]
 LOGS_PATH: '/home/pi/ocu/logs'
 DATA_PATH: '/home/pi/ocu/data'
+MODEL: 2
 
 [TCP_INTERFACE]
 HOST_NAME: '127.0.0.1'
@@ -16,6 +17,7 @@ SERIAL_TIMEOUT: 1
 
 [LOGGER]
 HEADER: 'extras/columns.txt'
+HEADER2: 'extras/columns.v2.txt'
 BUFFER: 30
 SENSE: False
 DATAFILE: 'OCU'
