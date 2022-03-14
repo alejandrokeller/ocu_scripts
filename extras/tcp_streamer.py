@@ -34,7 +34,7 @@ i = 0
 for line in fi:
    if (i > 2):
        datastring = line.rstrip('\n')
-       daytime, datastring = datastring.split('\t', 1)
+#       daytime, datastring = datastring.split('\t', 1)
        #print >>sys.stderr, line.rstrip('\n')
        print >>sys.stderr, datastring
        # Send data

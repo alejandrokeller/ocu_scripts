@@ -43,6 +43,14 @@ class instrument(object):
         self.pump2_on_str  = 'E2100!'
         self.rH_off_str    = 'r0000!'
         self.rH_on_str     = 'r1000!'
+        self.tec1_off_str  = 'G10!'
+        self.tec1_on_str   = 'G11!'
+        self.tec2_off_str  = 'G20!'
+        self.tec2_on_str   = 'G21!'
+        self.tecF1_off_str = 'H10!'
+        self.tecF1_on_str  = 'H11!'
+        self.tecF2_off_str = 'H20!'
+        self.tecF2_on_str  = 'H21!'
         
         self.queries = [
             "a?", # Response: "p values: P1=x; P2=5; BATH:0; Set: px000 to px999" controls pump and humidification
@@ -164,6 +172,13 @@ class instrument(object):
             self.send_commands([c], open_port = open_port)
         else:
             self.log_message("SERIAL", "Relative humidity setting invalid: '" + c + "'")    
+
+    def set_TEC(self, tec, temp, open_port = False): # in degC
+        c = 'g{}{0:03d}!'.format(tec,temp)
+        if temp >= 10 and temp <= 80 and ( tec == 1 or tec == 2):
+            self.send_commands([c], open_port = open_port)
+        else:
+            self.log_message("SERIAL", "Pump setting invalid: '" + c + "'")
 
     def stop_datastream(self, open_port = False):
         # This function sends the stop datastream command (X0000) and

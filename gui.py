@@ -148,8 +148,8 @@ class Visualizer(object):
             hex2bin  # lamps
             ]
         self.functions2 = [ # additional columns of version 2
-            int,        # sb1
-            int,        # sb2
+            float,        # sb1
+            float,        # sb2
             float,      # b1
             float,      # b2
             float,      # tec1
@@ -224,22 +224,22 @@ class Visualizer(object):
             ]
 
         self.tecKeys = [
-            "tec15",
-            "tec14",
-            "tec13",
-            "tec12",
-            "tec11",
-            "tec10",
-            "tec09",
-            "tec08",
-            "tec07",
-            "tec06",
-            "tec05",
-            "tec04",
-            "tec03",
-            "tec02",
-            "tec01",
-            "tec00",
+            "K2 Short GND",
+            "K2 Short VCC",
+            "K2 Open",
+            "Pt1000B General Error",
+            "Pt1000B Open",
+            "Pt1000B Short",
+            "TEC over temperature",
+            "TEC over current",
+            "K1 GND",
+            "K1 VCC",
+            "K1 Open",
+            "Pt1000A General Error",
+            "Pt1000A Open",
+            "Pt1000A Short",
+            "tec2",
+            "tec1"
             ]
 
         self.lampString = '00000'
@@ -285,6 +285,20 @@ class Visualizer(object):
         self.Fcurves[1] = self.Fplot.plot(self.t, self.df['mfc2'], pen=pg.mkPen('r', width=1), name='MFC2')
         # currently the set variable does not exists
         #self.Fcurves[3] = self.Fplot.plot(self.t, self.df['smfc2'], pen=pg.mkPen('r', width=1, style=QtCore.Qt.DashLine))
+
+        if self.device.model == 2:
+            self.TECcurves = dict()
+
+            self.TECplot = pg.PlotWidget()
+            self.TECplot.addLegend()
+            self.TECplot.setLabel('left', "TEC Temp", units='degC')
+            self.TECplot.setLabel('bottom', "t", units='s')
+            self.TECplot.showGrid(False, True)
+            self.TECcurves[0] = self.TECplot.plot(self.t, self.df['sb1'], pen=pg.mkPen('y', width=1, style=QtCore.Qt.DashLine))
+            self.TECcurves[1] = self.TECplot.plot(self.t, self.df['b1'], pen=pg.mkPen('y', width=1), name='TEC1')
+            self.TECcurves[2] = self.TECplot.plot(self.t, self.df['sb2'], pen=pg.mkPen('r', width=1, style=QtCore.Qt.DashLine))
+            self.TECcurves[3] = self.TECplot.plot(self.t, self.df['b2'], pen=pg.mkPen('r', width=1), name='TEC2')
+
 
 #####################################################################
 
@@ -393,6 +407,50 @@ class Visualizer(object):
         validator = QtGui.QRegExpValidator(QtCore.QRegExp("[abFpirRXzZ][0-9]{4}"))
         self.lineSERIAL.setValidator(validator)
 
+        ## Create widgets for serial commands
+        if self.device.model == 2:
+            self.btnTEC1      = QtGui.QPushButton("")            # Turn TEC1 on or off
+            self.btnTEC1.setFixedWidth(button_size)
+            self.btnTEC1.setFixedHeight(button_size)
+            self.btnTEC1.clicked.connect(self.toggleTEC1)
+            self.btnTEC1set         = QtGui.QPushButton(">>")    # Sends new TEC1 setpoint
+            self.btnTEC1set.setFixedWidth(button_size)
+            self.btnTEC1set.setFixedHeight(button_size)
+            self.btnTEC1set.clicked.connect(self.setTEC1)
+            self.lblTEC1       = QtGui.QLabel("TEC1 (degC):")
+            self.spTEC1        = QtGui.QSpinBox()
+            self.spTEC1.setRange(10,80)
+
+            self.btnTEC2      = QtGui.QPushButton("")            # Turn TEC2 on or off
+            self.btnTEC2.setFixedWidth(button_size)
+            self.btnTEC2.setFixedHeight(button_size)
+            self.btnTEC2.clicked.connect(self.toggleTEC2)
+            self.btnTEC2set         = QtGui.QPushButton(">>")    # Sends new TEC2 setpoint
+            self.btnTEC2set.setFixedWidth(button_size)
+            self.btnTEC2set.setFixedHeight(button_size)
+            self.btnTEC2set.clicked.connect(self.setTEC2)
+            self.lblTEC2       = QtGui.QLabel("TEC2 (degC):")
+            self.spTEC2        = QtGui.QSpinBox()
+            self.spTEC2.setRange(10,80)
+
+            ## Create a grid layout to manage the TEC controls size and position
+            self.tecControlLayout = QtGui.QGridLayout()
+
+            self.tecControlLayout.addWidget(self.btnTEC1,      0, 0)
+            self.tecControlLayout.addWidget(self.lblTEC1,      0, 1)
+            self.tecControlLayout.addWidget(self.spTEC1,       0, 2)
+            self.tecControlLayout.addWidget(self.btnTEC1set,   0, 3)
+
+            self.tecControlLayout.addWidget(self.btnTEC2,      1, 0)
+            self.tecControlLayout.addWidget(self.lblTEC2,      1, 1)
+            self.tecControlLayout.addWidget(self.spTEC2,       1, 2)
+            self.tecControlLayout.addWidget(self.btnTEC2set,   1, 3)
+
+            ## Temporary label with TEC Status
+            self.lblTECStatus   = QtGui.QLabel("TEC Status")
+
+            
+
         ## Create a grid layout to manage the controls size and position
         self.controlsLayout = QtGui.QGridLayout()
         self.encloserLayout = QtGui.QVBoxLayout()
@@ -415,7 +473,8 @@ class Visualizer(object):
 
         ## Add widgets to the layout in their proper positions
         self.controlsLayout.addWidget(self.lblLamp,      0, 1)
-        self.controlsLayout.addWidget(self.lblVOCTctr,   1, 1)
+        if self.device.model == 1:
+            self.controlsLayout.addWidget(self.lblVOCTctr,   1, 1)
         self.controlsLayout.addWidget(self.lblVOC1,      2, 1)
         self.controlsLayout.addWidget(self.lblVOC2,      3, 1)
         self.controlsLayout.addWidget(self.lblPump1,     4, 1)
@@ -432,7 +491,8 @@ class Visualizer(object):
 ##        self.controlsLayout.addWidget(self.lblCD,    9, 0, 1, 2) # example of two spaces horizontal (one vertical)
 
         self.controlsLayout.addWidget(self.btnLamp,     0, 0)
-        self.controlsLayout.addWidget(self.btnVOCTctr,  1, 0)
+        if self.device.model == 1:
+            self.controlsLayout.addWidget(self.btnVOCTctr,  1, 0)
         self.controlsLayout.addWidget(self.btnVOC1,     2, 0)
         self.controlsLayout.addWidget(self.btnVOC2,     3, 0)
         self.controlsLayout.addWidget(self.btnPump1,    4, 0)
@@ -443,9 +503,10 @@ class Visualizer(object):
         self.mfcLayout.addWidget(self.lblSVOC1,    0, 0)
         self.mfcLayout.addWidget(self.spSVOC1,     0, 1)
         self.mfcLayout.addWidget(self.btnSVOC1,    0, 2)
-        self.mfcLayout.addWidget(self.lblVOCT,     1, 0)
-        self.mfcLayout.addWidget(self.spVOCT,      1, 1)
-        self.mfcLayout.addWidget(self.btnVOCT,     1, 2)
+        if self.device.model == 1:
+            self.mfcLayout.addWidget(self.lblVOCT,     1, 0)
+            self.mfcLayout.addWidget(self.spVOCT,      1, 1)
+            self.mfcLayout.addWidget(self.btnVOCT,     1, 2)
         self.mfcLayout.addWidget(self.lblMFC2,     2, 0)
         self.mfcLayout.addWidget(self.spMFC2,      2, 1)
         self.mfcLayout.addWidget(self.btnMFC2,     2, 2)
@@ -456,27 +517,52 @@ class Visualizer(object):
         self.mfcLayout.addWidget(self.lineSERIAL,  4, 1)
         self.mfcLayout.addWidget(self.btnSERIAL,   4, 2)
 
-        ## Create a QVBox layout to manage the plots
-        self.plotLayout = QtGui.QVBoxLayout()
+        ## Create a QVBox layout to manage the Info and plots
+        self.infoLayout = QtGui.QVBoxLayout()
 
         ## Create a QHBox for the text info
         self.textLayout = QtGui.QHBoxLayout()
-#        self.textLayout.addWidget(self.lblTube)
-        self.textLayout.addWidget(self.lblTubeT)
+        if self.device.model == 1:
+#            self.textLayout.addWidget(self.lblTube)
+            self.textLayout.addWidget(self.lblTubeT)
 #        self.textLayout.addWidget(self.lblLamps)
         self.textLayout.addWidget(self.lblLampsData)
 #        self.textLayout.addWidget(self.lblInlet)
         self.textLayout.addWidget(self.lblInletData)
-        self.plotLayout.addLayout(self.textLayout)
 
+        ## First line of the plotLayout has the status text (temps at.s.o.)
+        self.infoLayout.addLayout(self.textLayout)
+        
+        ## Now the plots
+        self.plotLayout = QtGui.QVBoxLayout()
         self.plotLayout.addWidget(self.PIDplot)
         self.plotLayout.addWidget(self.Fplot)
+
+        if self.device.model == 1:
+            self.infoLayout.addLayout(self.plotLayout)
+        elif self.device.model == 2:
+            self.tecLayout = QtGui.QVBoxLayout()
+            self.tecLayout.addLayout(self.tecControlLayout)
+            self.tecLayout.addWidget(self.TECplot)
+            self.tecLayout.addWidget(self.lblTECStatus)
+            
+            ## Prepare tabs and add plots
+            ## Tab1 for PID and Flow plots
+            self.dataTab = QtGui.QTabWidget()
+            self.dataTab.tab1 = QtGui.QWidget()
+            self.dataTab.addTab(self.dataTab.tab1,"VOC / Flow")
+            self.dataTab.tab2 = QtGui.QWidget()
+            self.dataTab.addTab(self.dataTab.tab2,"TEC Control")
+
+            self.dataTab.tab1.setLayout(self.plotLayout)
+            self.dataTab.tab2.setLayout(self.tecLayout)
+            self.infoLayout.addWidget(self.dataTab)
 
         ## Create a QHBox layout to manage the plots
         self.centralLayout = QtGui.QHBoxLayout()
 
         self.centralLayout.addLayout(self.encloserLayout)
-        self.centralLayout.addLayout(self.plotLayout)
+        self.centralLayout.addLayout(self.infoLayout)
 
         ## Display the widget as a new window
         self.widgets.setLayout(self.centralLayout)
@@ -539,6 +625,17 @@ class Visualizer(object):
                 # Data is received in mlpm. Dividing through 1000 to use pyqugraph autolabeling
                 self.Fcurves[0].setData(self.t, self.df['mfc1']/1000)
                 self.Fcurves[1].setData(self.t, self.df['mfc2']/1000)
+
+                if self.device.model == 2:
+                    self.TECcurves[0].setData(self.t, self.df['sb1'])
+                    self.TECcurves[1].setData(self.t, self.df['b1'])
+                    self.TECcurves[2].setData(self.t, self.df['sb2'])
+                    self.TECcurves[3].setData(self.t, self.df['b2'])
+
+                    self.lblTEC1.setText("".join(("TEC1: ", str(int(newData['b1'])), "/",
+                                               str(int(newData['sb1'])), " degC")))
+                    self.lblTEC2.setText("".join(("TEC2: ", str(int(newData['b1'])), "/",
+                                               str(int(newData['sb1'])), " degC")))
                 
 ####################################################################
 
@@ -564,6 +661,9 @@ class Visualizer(object):
                     self.spSVOC1.setValue(int(newData['svoc1']))
                     self.spVOCT.setValue(int(newData['stvoc']))
                     self.spRH.setValue(int(newData['sinrH']))
+                    if self.device.model == 2:
+                        self.spTEC1.setValue(int(newData['sb1']))
+                        self.spTEC2.setValue(int(newData['sb2']))
                     
 
 ################# Example of color toggle
@@ -615,6 +715,21 @@ class Visualizer(object):
                     self.lblBathrH.setStyleSheet('color: green')
                 else:
                     self.lblBathrH.setStyleSheet('color: red')
+
+                if self.device.model == 2:
+                    txtStatus = "TEC Status: "
+                    for key, status in self.tecDict.items():
+                        if status:
+                            txtStatus = txtStatus + " " + key
+                    self.lblTECStatus.setText(txtStatus)
+                    if self.tecDict['tec1']:
+                        self.lblTEC1.setStyleSheet('color: green')
+                    else:
+                        self.lblTEC1.setStyleSheet('color: red')
+                    if self.tecDict['tec2']:
+                        self.lblTEC2.setStyleSheet('color: green')
+                    else:
+                        self.lblTEC2.setStyleSheet('color: red')
                                     
         except Exception as e:
             print >>sys.stderr, e
@@ -634,6 +749,12 @@ class Visualizer(object):
 
     def setVOCT(self):
         self.device.set_tubeT(self.spVOCT.value() ,open_port = True)
+
+    def setTEC1(self):
+        self.device.set_TEC(1, self.spTEC1.value() ,open_port = True)
+
+    def setTEC2(self):
+        self.device.set_TEC(2, self.spTEC2.value() ,open_port = True)
         
     def setRH(self):
         self.device.set_rH(self.spRH.value() ,open_port = True)
@@ -661,6 +782,20 @@ class Visualizer(object):
             commands = [self.device.tube_off_str]
         else:
             commands = [self.device.tube_on_str]
+        self.device.send_commands(commands, open_port = True)
+
+    def toggleTEC1(self):
+        if self.tecDict['tec1']:
+            commands = [self.device.tec1_off_str]
+        else:
+            commands = [self.device.tec1_on_str]
+        self.device.send_commands(commands, open_port = True)
+
+    def toggleTEC2(self):
+        if self.tecDict['tec2']:
+            commands = [self.device.tec2_off_str]
+        else:
+            commands = [self.device.tec2_on_str]
         self.device.send_commands(commands, open_port = True)
         
     def toggleVOC1(self):
