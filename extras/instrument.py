@@ -174,8 +174,8 @@ class instrument(object):
             self.log_message("SERIAL", "Relative humidity setting invalid: '" + c + "'")    
 
     def set_TEC(self, tec, temp, open_port = False): # in degC
-        c = 'g{}{0:03d}!'.format(tec,temp)
-        if temp >= 10 and temp <= 80 and ( tec == 1 or tec == 2):
+        c = 'B{}{0:03d}!'.format(tec,temp)
+        if temp >= 0 and temp <= 80 and ( tec == 1 or tec == 2):
             self.send_commands([c], open_port = open_port)
         else:
             self.log_message("SERIAL", "Pump setting invalid: '" + c + "'")

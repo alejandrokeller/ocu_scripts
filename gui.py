@@ -405,6 +405,8 @@ class Visualizer(object):
         self.lblSERIAL     = QtGui.QLabel("Command:")
         self.lineSERIAL    = QtGui.QLineEdit()
         validator = QtGui.QRegExpValidator(QtCore.QRegExp("[abFpirRXzZ][0-9]{4}"))
+        if self.device.model == 2:
+            validator = QtGui.QRegExpValidator(QtCore.QRegExp("[abFgHhuDpirRXzZ][0-9]{4}"))
         self.lineSERIAL.setValidator(validator)
 
         ## Create widgets for serial commands
@@ -431,7 +433,7 @@ class Visualizer(object):
             self.btnTEC2set.clicked.connect(self.setTEC2)
             self.lblTEC2       = QtGui.QLabel("TEC2 (degC):")
             self.spTEC2        = QtGui.QSpinBox()
-            self.spTEC2.setRange(10,80)
+            self.spTEC2.setRange(0,80)
 
             ## Create a grid layout to manage the TEC controls size and position
             self.tecControlLayout = QtGui.QGridLayout()
@@ -544,7 +546,8 @@ class Visualizer(object):
             self.tecLayout = QtGui.QVBoxLayout()
             self.tecLayout.addLayout(self.tecControlLayout)
             self.tecLayout.addWidget(self.TECplot)
-            self.tecLayout.addWidget(self.lblTECStatus)
+#            self.tecLayout.addWidget(self.lblTECStatus)
+            self.mfcLayout.addWidget(self.lblTECStatus)
             
             ## Prepare tabs and add plots
             ## Tab1 for PID and Flow plots
@@ -718,10 +721,22 @@ class Visualizer(object):
 
                 if self.device.model == 2:
                     txtStatus = "TEC Status: "
-                    for key, status in self.tecDict.items():
+                    hasStatus = 0
+                    newDict = self.tecDict.copy()
+                    newDict.pop('tec1', None)
+                    newDict.pop('tec2', None)
+                    for key, status in newDict.items():
+                        if hasStatus:
+                            txtStatus = txtStatus + ", "
                         if status:
-                            txtStatus = txtStatus + " " + key
-                    self.lblTECStatus.setText(txtStatus)
+                            txtStatus = txtStatus + key
+                            hasStatus = 1
+                    if hasStatus:
+                        self.lblTECStatus.setText(txtStatus)
+                        self.lblTECStatus.setStyleSheet("background-color: yellow; border: 1px solid black;")
+                    else:
+                        self.lblTECStatus.setText("TEC Status: OK")
+                        self.lblTECStatus.setStyleSheet("background-color: lightgreen;  border: 0px;")
                     if self.tecDict['tec1']:
                         self.lblTEC1.setStyleSheet('color: green')
                     else:
