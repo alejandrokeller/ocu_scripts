@@ -423,11 +423,11 @@ class Visualizer(object):
             self.cbTEC1 = QtGui.QComboBox()
             self.cbTEC1.addItem("cool")
             self.cbTEC1.addItem("heat")
-            self.cbTEC1.currentIndexChanged.connect(self.TEC1Mode)    # Cooling/Heating
+            self.cbTEC1.activated.connect(self.TEC1Mode)    # Cooling/Heating
             self.cbTEC2 = QtGui.QComboBox()
             self.cbTEC2.addItem("cool")
             self.cbTEC2.addItem("heat")
-            self.cbTEC1.currentIndexChanged.connect(self.TEC2Mode)    # Cooling/Heating
+            self.cbTEC1.activated.connect(self.TEC2Mode)    # Cooling/Heating
 
             self.btnTEC2       = QtGui.QPushButton("")           # Turn TEC2 on or off
             self.btnTEC2.setFixedWidth(button_size)
@@ -677,6 +677,10 @@ class Visualizer(object):
                     if self.device.model == 2:
                         self.spTEC1.setValue(int(newData['sb1']))
                         self.spTEC2.setValue(int(newData['sb2']))
+                        self.cbTEC1.setCurrentIndex(self.tecDict['tec1'])
+                            #self.cbTEC1.itemText(self.tecDict['tec1'])
+                        self.cbTEC2.setCurrentIndex(self.tecDict['tec2'])
+                            #self.cbTEC2.itemText(self.tecDict['tec2']))
                     
 
 ################# Example of color toggle
@@ -750,18 +754,18 @@ class Visualizer(object):
                     if self.statusDict['tec1']:
 #                        self.lblTEC1.setStyleSheet('color: green')
                         if self.tecDict['tec1']: # Heating = 1
-                            self.lblTEC1mode.setStyleSheet('color: blue')
-                        else:
                             self.lblTEC1mode.setStyleSheet('color: red')
+                        else:
+                            self.lblTEC1mode.setStyleSheet('color: blue')
                     else:
 #                        self.lblTEC1.setStyleSheet('color: red')
                         self.lblTEC1mode.setStyleSheet('color: black')
                     if self.statusDict['tec2']:
 #                        self.lblTEC2.setStyleSheet('color: green')
                         if self.tecDict['tec2']: # Heating = 1
-                            self.lblTEC2mode.setStyleSheet('color: blue')
-                        else:
                             self.lblTEC2mode.setStyleSheet('color: red')
+                        else:
+                            self.lblTEC2mode.setStyleSheet('color: blue')
                     else:
 #                        self.lblTEC2.setStyleSheet('color: red')
                         self.lblTEC2mode.setStyleSheet('color: black')
