@@ -78,6 +78,7 @@ class instrument(object):
 
         # return the port if self.serial_port_description is in the description
         for port in ports:
+            print port[2]
             if self.serial_port_description in port[2]:
                 return port[0]
         return "n/a"
@@ -128,7 +129,7 @@ class instrument(object):
             self.close_port()
 
     def set_pump(self, pump, flow, open_port = False):
-        c = 'L{}{0:03d}!'.format(pump,flow)
+        c = 'L{0}{1:03d}!'.format(pump,flow)
         if flow >= 0 and flow <= 100 and ( pump == 1 or pump == 2):
             self.send_commands([c], open_port = open_port)
         else:
@@ -174,11 +175,18 @@ class instrument(object):
             self.log_message("SERIAL", "Relative humidity setting invalid: '" + c + "'")    
 
     def set_TEC(self, tec, temp, open_port = False): # in degC
-        c = 'B{}{0:03d}!'.format(tec,temp)
+        c = 'B{0}{1:03d}!'.format(tec,temp)
         if temp >= 0 and temp <= 80 and ( tec == 1 or tec == 2):
             self.send_commands([c], open_port = open_port)
         else:
-            self.log_message("SERIAL", "Pump setting invalid: '" + c + "'")
+            self.log_message("SERIAL", "TEC setting invalid: '" + c + "'")
+
+    def set_TECMode(self, tec, mode, open_port = False): # in degC
+        c = 'Y{0}{1}!'.format(tec,mode + 1)
+        if ( mode == 1 or mode == 0) and ( tec == 1 or tec == 2):
+            self.send_commands([c], open_port = open_port)
+        else:
+            self.log_message("SERIAL", "TEC setting invalid: '" + c + "'")
 
     def stop_datastream(self, open_port = False):
         # This function sends the stop datastream command (X0000) and
