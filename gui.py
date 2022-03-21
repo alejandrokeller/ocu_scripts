@@ -261,7 +261,6 @@ class Visualizer(object):
         self.t = np.linspace(-self.graphLength, 0, self.numSamples)
 
         self.PIDcurves = dict()
-
         self.PIDplot = pg.PlotWidget()
         self.PIDplot.addLegend()
         #self.PIDplot.setRange(yRange=[0, 900])
@@ -274,7 +273,6 @@ class Visualizer(object):
         self.PIDcurves[3] = self.PIDplot.plot(self.t, self.df['voc2'], pen=pg.mkPen('r', width=1), name='PID2')
         
         self.Fcurves = dict()
-
         self.Fplot = pg.PlotWidget()
         self.Fplot.addLegend()
         self.Fplot.setRange(yRange=[-0.005, 0.105])
@@ -286,6 +284,40 @@ class Visualizer(object):
         # currently the set variable does not exists
         #self.Fcurves[3] = self.Fplot.plot(self.t, self.df['smfc2'], pen=pg.mkPen('r', width=1, style=QtCore.Qt.DashLine))
 
+        self.RHcurves = dict()
+        self.RHplot = pg.PlotWidget()
+        self.RHplot.addLegend()
+        self.RHplot.setLabel('left', "Inlet rH", units='%')
+        self.RHplot.setLabel('bottom', "t", units='s')
+        self.RHplot.showGrid(False, True)
+        self.RHcurves[0] = self.RHplot.plot(self.t, self.df['sinrH'], pen=pg.mkPen('y', width=1, style=QtCore.Qt.DashLine))
+        self.RHcurves[1] = self.RHplot.plot(self.t, self.df['inrH'], pen=pg.mkPen('y', width=1))
+
+        self.Tcurves = dict()
+        self.Tplot = pg.PlotWidget()
+        self.Tplot.addLegend()
+        self.Tplot.setLabel('left', "T", units='degC')
+        self.Tplot.setLabel('bottom', "t", units='s')
+        self.Tplot.showGrid(False, True)
+        self.Tcurves[0] = self.Tplot.plot(self.t, self.df['inT'], pen=pg.mkPen('y', width=1), name='Inlet')
+        self.Tcurves[1] = self.Tplot.plot(self.t, self.df['tbath'], pen=pg.mkPen('r', width=1), name='rH bath')
+
+        self.OFRTcurves = dict()
+        self.OFRTplot = pg.PlotWidget()
+        self.OFRTplot.addLegend()
+        self.OFRTplot.setLabel('left', "T", units='degC')
+        self.OFRTplot.setLabel('bottom', "t", units='s')
+        self.OFRTplot.showGrid(False, True)
+        self.OFRTcurves[0] = self.OFRTplot.plot(self.t, self.df['tuv'], pen=pg.mkPen('y', width=1))
+
+        self.OFRUVcurves = dict()
+        self.OFRUVplot = pg.PlotWidget()
+        self.OFRUVplot.addLegend()
+        self.OFRUVplot.setLabel('left', "UV sensor", units='A')
+        self.OFRUVplot.setLabel('bottom', "t", units='s')
+        self.OFRUVplot.showGrid(False, True)
+        self.OFRUVcurves[0] = self.OFRUVplot.plot(self.t, self.df['iuv'], pen=pg.mkPen('y', width=1))
+        
         if self.device.model == 2:
             self.TECcurves = dict()
 
@@ -540,34 +572,57 @@ class Visualizer(object):
             self.textLayout.addWidget(self.lblTEC1mode)
             self.textLayout.addWidget(self.lblTEC2mode)
 
-        ## First line of the plotLayout has the status text (temps at.s.o.)
+        ## First line of the pidLayout has the status text (temps at.s.o.)
         self.infoLayout.addLayout(self.textLayout)
         
         ## Now the plots
-        self.plotLayout = QtGui.QVBoxLayout()
-        self.plotLayout.addWidget(self.PIDplot)
-        self.plotLayout.addWidget(self.Fplot)
+        self.pidLayout = QtGui.QVBoxLayout()
+        self.pidLayout.addWidget(self.PIDplot)
+        self.pidLayout.addWidget(self.Fplot)
 
-        if self.device.model == 1:
-            self.infoLayout.addLayout(self.plotLayout)
-        elif self.device.model == 2:
+        self.rhLayout = QtGui.QVBoxLayout()
+        self.rhLayout.addWidget(self.RHplot)
+        self.rhLayout.addWidget(self.Tplot)
+
+        self.ofrLayout = QtGui.QVBoxLayout()
+        self.ofrLayout.addWidget(self.OFRUVplot)
+        self.ofrLayout.addWidget(self.OFRTplot)
+
+        ## Prepare tabs and add plots
+        self.dataTab = QtGui.QTabWidget()
+        ## TabPID for PID and Flow plots
+        self.dataTab.tabPID = QtGui.QWidget()
+        self.dataTab.addTab(self.dataTab.tabPID,"VOC / Flow")
+        self.dataTab.tabPID.setLayout(self.pidLayout)
+
+##        if self.device.model == 1:
+##            self.infoLayout.addLayout(self.pidLayout)
+##        elif self.device.model == 2:
+        if self.device.model == 2:
             self.tecLayout = QtGui.QVBoxLayout()
             self.tecLayout.addLayout(self.tecControlLayout)
             self.tecLayout.addWidget(self.TECplot)
 #            self.tecLayout.addWidget(self.lblTECStatus)
             self.mfcLayout.addWidget(self.lblTECStatus)
             
-            ## Prepare tabs and add plots
-            ## Tab1 for PID and Flow plots
-            self.dataTab = QtGui.QTabWidget()
-            self.dataTab.tab1 = QtGui.QWidget()
-            self.dataTab.addTab(self.dataTab.tab1,"VOC / Flow")
-            self.dataTab.tab2 = QtGui.QWidget()
-            self.dataTab.addTab(self.dataTab.tab2,"TEC Control")
-
-            self.dataTab.tab1.setLayout(self.plotLayout)
-            self.dataTab.tab2.setLayout(self.tecLayout)
+            ## Prepare tabs
+##            self.dataTab = QtGui.QTabWidget()
+##            self.dataTab.tabPID = QtGui.QWidget()
+##            self.dataTab.addTab(self.dataTab.tabPID,"VOC / Flow")
+##            self.dataTab.tabPID.setLayout(self.pidLayout)
+            self.dataTab.tabTEC = QtGui.QWidget()
+            self.dataTab.addTab(self.dataTab.tabTEC,"TEC Control")
+            self.dataTab.tabTEC.setLayout(self.tecLayout)
             self.infoLayout.addWidget(self.dataTab)
+
+        ## TabRH for rH and Temp plots
+        self.dataTab.tabRH = QtGui.QWidget()
+        self.dataTab.addTab(self.dataTab.tabRH,"rH / Temp")
+        self.dataTab.tabRH.setLayout(self.rhLayout)
+        ## TabOFR for OFR plots
+        self.dataTab.tabOFR = QtGui.QWidget()
+        self.dataTab.addTab(self.dataTab.tabOFR,"OFR")
+        self.dataTab.tabOFR.setLayout(self.ofrLayout)
 
         ## Create a QHBox layout to manage the plots
         self.centralLayout = QtGui.QHBoxLayout()
@@ -636,6 +691,15 @@ class Visualizer(object):
                 # Data is received in mlpm. Dividing through 1000 to use pyqugraph autolabeling
                 self.Fcurves[0].setData(self.t, self.df['mfc1']/1000)
                 self.Fcurves[1].setData(self.t, self.df['mfc2']/1000)
+
+                self.RHcurves[0].setData(self.t, self.df['sinrH'])
+                self.RHcurves[1].setData(self.t, self.df['inrH'])
+                self.Tcurves[0].setData(self.t, self.df['inT'])
+                self.Tcurves[1].setData(self.t, self.df['tbath'])
+                self.OFRTcurves[0].setData(self.t, self.df['tuv'])
+                # Data is received in mV. Convert using calibration constant
+                self.OFRUVcurves[0].setData(self.t, self.df['iuv']*self.device.uv_constant/1000/1000000)
+
 
                 if self.device.model == 2:
                     self.TECcurves[0].setData(self.t, self.df['sb1'])

@@ -14,16 +14,18 @@ class instrument(object):
         if os.path.exists(config_file):
             config = configparser.ConfigParser()
             config.read(config_file)
-            self.serial_port_description = eval(config['SERIAL_SETTINGS']['SERIAL_PORT_DESCRIPTION'])
-            self.serial_baudrate         = eval(config['SERIAL_SETTINGS']['SERIAL_BAUDRATE'])
-            self.serial_parity           = eval(config['SERIAL_SETTINGS']['SERIAL_PARITY'])
-            self.serial_stopbits         = eval(config['SERIAL_SETTINGS']['SERIAL_STOPBITS'])
-            self.serial_bytesize         = eval(config['SERIAL_SETTINGS']['SERIAL_BYTESIZE'])
-            self.serial_timeout          = eval(config['SERIAL_SETTINGS']['SERIAL_TIMEOUT'])
-            self.uv_constant             = eval(config['CALIBRATION']['UV_CONSTANT'])
-            self.model                   = eval(config['GENERAL_SETTINGS']['MODEL'])
+            self.serial_port_description  = eval(config['SERIAL_SETTINGS']['SERIAL_PORT_DESCRIPTION'])
+            self.serial_port_description2 = eval(config['SERIAL_SETTINGS']['SERIAL_PORT_DESCRIPTION2'])
+            self.serial_baudrate          = eval(config['SERIAL_SETTINGS']['SERIAL_BAUDRATE'])
+            self.serial_parity            = eval(config['SERIAL_SETTINGS']['SERIAL_PARITY'])
+            self.serial_stopbits          = eval(config['SERIAL_SETTINGS']['SERIAL_STOPBITS'])
+            self.serial_bytesize          = eval(config['SERIAL_SETTINGS']['SERIAL_BYTESIZE'])
+            self.serial_timeout           = eval(config['SERIAL_SETTINGS']['SERIAL_TIMEOUT'])
+            self.uv_constant              = eval(config['CALIBRATION']['UV_CONSTANT'])
+            self.model                    = eval(config['GENERAL_SETTINGS']['MODEL'])
             if not self.model:
-                self.model = 1
+                # try to figure out the instrument's model based on the serial port info
+                self.port = self.serial_ports()
         else:
             self.log_message("INSTRUMENT", "Could not find the configuration file: " + config_file)
             exit()
@@ -80,6 +82,10 @@ class instrument(object):
         for port in ports:
             print port[2]
             if self.serial_port_description in port[2]:
+                self.model = 1
+                return port[0]
+            if self.serial_port_description2 in port[2]:
+                self.model = 2
                 return port[0]
         return "n/a"
 
@@ -92,7 +98,7 @@ class instrument(object):
 
         try:
             while self.port == "n/a":
-                self.log_message("SERIAL", "no TCA found, waiting " + str(wait) + " seconds to retry...")
+                self.log_message("SERIAL", "no instrument found, waiting " + str(wait) + " seconds to retry...")
                 time.sleep(wait)
                 if wait < 32:
                     wait = wait*2
@@ -101,7 +107,7 @@ class instrument(object):
            self.log_message("SERIAL", "aborted by user!... bye...")
            raise
 
-        self.log_message("SERIAL", "Serial port found: " + str(self.port))
+        self.log_message("SERIAL", "Serial port {} found: OCU Model {}".format(self.port, self.model))
 
         self.ser = serial.Serial(
             port = self.port,
