@@ -455,11 +455,11 @@ class Visualizer(object):
             self.cbTEC1 = QtGui.QComboBox()
             self.cbTEC1.addItem("cool")
             self.cbTEC1.addItem("heat")
-            self.cbTEC1.activated.connect(self.TEC1Mode)    # Cooling/Heating
+            #self.cbTEC1.activated.connect(self.TEC1Mode)    # Cooling/Heating
             self.cbTEC2 = QtGui.QComboBox()
             self.cbTEC2.addItem("cool")
             self.cbTEC2.addItem("heat")
-            self.cbTEC1.activated.connect(self.TEC2Mode)    # Cooling/Heating
+            #self.cbTEC1.activated.connect(self.TEC2Mode)    # Cooling/Heating
 
             self.btnTEC2       = QtGui.QPushButton("")           # Turn TEC2 on or off
             self.btnTEC2.setFixedWidth(button_size)
@@ -493,8 +493,9 @@ class Visualizer(object):
             self.tecControlLayout.addWidget(self.btnTEC2set,   1, 4)
 
             ## Temporary label with TEC Status
-            self.lblTECStatus   = QtGui.QLabel("TEC Status")
-
+            self.lblTECStatus   = QtGui.QLabel("TEC Status: - STATUS TEXT -")
+            #self.lblTECStatus.setFixedWidth(self.lblTECStatus.sizeHint().width())
+            self.lblTECStatus.setWordWrap(True)
             
 
         ## Create a grid layout to manage the controls size and position
@@ -505,6 +506,8 @@ class Visualizer(object):
         self.encloserLayout.addLayout(self.controlsLayout)
         self.encloserLayout.addLayout(self.lampsButtonsLayout)
         self.encloserLayout.addLayout(self.mfcLayout)
+        if self.lblTECStatus:
+            self.encloserLayout.addWidget(self.lblTECStatus)
         self.encloserLayout.addStretch(1)
 
         ## Create individual lamp buttons
@@ -556,7 +559,7 @@ class Visualizer(object):
         self.mfcLayout.addWidget(self.lblSERIAL,   4, 0)
         self.mfcLayout.addWidget(self.lineSERIAL,  4, 1)
         self.mfcLayout.addWidget(self.btnSERIAL,   4, 2)
-
+        
         ## Create a QVBox layout to manage the Info and plots
         self.infoLayout = QtGui.QVBoxLayout()
 
@@ -595,21 +598,12 @@ class Visualizer(object):
         self.dataTab.addTab(self.dataTab.tabPID,"VOC / Flow")
         self.dataTab.tabPID.setLayout(self.pidLayout)
 
-##        if self.device.model == 1:
-##            self.infoLayout.addLayout(self.pidLayout)
-##        elif self.device.model == 2:
         if self.device.model == 2:
             self.tecLayout = QtGui.QVBoxLayout()
             self.tecLayout.addLayout(self.tecControlLayout)
             self.tecLayout.addWidget(self.TECplot)
-#            self.tecLayout.addWidget(self.lblTECStatus)
-            self.mfcLayout.addWidget(self.lblTECStatus)
             
             ## Prepare tabs
-##            self.dataTab = QtGui.QTabWidget()
-##            self.dataTab.tabPID = QtGui.QWidget()
-##            self.dataTab.addTab(self.dataTab.tabPID,"VOC / Flow")
-##            self.dataTab.tabPID.setLayout(self.pidLayout)
             self.dataTab.tabTEC = QtGui.QWidget()
             self.dataTab.addTab(self.dataTab.tabTEC,"TEC Control")
             self.dataTab.tabTEC.setLayout(self.tecLayout)
@@ -816,23 +810,25 @@ class Visualizer(object):
                         self.lblTECStatus.setText("TEC Status: OK")
                         self.lblTECStatus.setStyleSheet("background-color: lightgreen;  border: 0px;")
                     if self.statusDict['tec1']:
-#                        self.lblTEC1.setStyleSheet('color: green')
                         if self.tecDict['tec1']: # Heating = 1
                             self.lblTEC1mode.setStyleSheet('color: red')
+                            self.lblTEC1.setStyleSheet('color: red')
                         else:
                             self.lblTEC1mode.setStyleSheet('color: blue')
+                            self.lblTEC1.setStyleSheet('color: blue')
                     else:
-#                        self.lblTEC1.setStyleSheet('color: red')
                         self.lblTEC1mode.setStyleSheet('color: black')
+                        self.lblTEC1.setStyleSheet('color: black')
                     if self.statusDict['tec2']:
-#                        self.lblTEC2.setStyleSheet('color: green')
                         if self.tecDict['tec2']: # Heating = 1
                             self.lblTEC2mode.setStyleSheet('color: red')
+                            self.lblTEC2.setStyleSheet('color: red')
                         else:
                             self.lblTEC2mode.setStyleSheet('color: blue')
+                            self.lblTEC2.setStyleSheet('color: blue')
                     else:
-#                        self.lblTEC2.setStyleSheet('color: red')
                         self.lblTEC2mode.setStyleSheet('color: black')
+                        self.lblTEC2.setStyleSheet('color: black')
                     self.lblTEC1mode.setText("".join(("TEC1 (",
                                             self.cbTEC1.itemText(self.tecDict['tec1']),
                                             ")")))
@@ -861,9 +857,11 @@ class Visualizer(object):
 
     def setTEC1(self):
         self.device.set_TEC(1, self.spTEC1.value() ,open_port = True)
+        self.device.set_TECMode(1, self.cbTEC1.currentIndex() ,open_port = True)
 
     def setTEC2(self):
         self.device.set_TEC(2, self.spTEC2.value() ,open_port = True)
+        self.device.set_TECMode(2, self.cbTEC2.currentIndex() ,open_port = True)
         
     def setRH(self):
         self.device.set_rH(self.spRH.value() ,open_port = True)
@@ -894,14 +892,14 @@ class Visualizer(object):
         self.device.send_commands(commands, open_port = True)
 
     def toggleTEC1(self):
-        if self.tecDict['tec1']:
+        if self.statusDict['tec1']:
             commands = [self.device.tec1_off_str]
         else:
             commands = [self.device.tec1_on_str]
         self.device.send_commands(commands, open_port = True)
 
     def toggleTEC2(self):
-        if self.tecDict['tec2']:
+        if self.statusDict['tec2']:
             commands = [self.device.tec2_off_str]
         else:
             commands = [self.device.tec2_on_str]
