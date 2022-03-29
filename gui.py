@@ -77,12 +77,274 @@ class Visualizer(object):
 
         # init pyqt
         self.app = QtGui.QApplication([])
-###        self.win = pg.GraphicsWindow(title="OCU")
-###        self.win.showFullScreen()
-###        self.win.setWindowTitle('OCU Control Panel')
         pg.setConfigOptions(antialias=False)
         pg.setConfigOption('foreground', 'w')
 
+        #init data structure
+        self.__dataStructure()
+
+        # setup plots
+        self.pen = pg.mkPen('y', width=1)
+        self.t = np.linspace(-self.graphLength, 0, self.numSamples)
+        
+        self.__PIDplots()
+        self.__Fplots()
+        self.__RHplots()
+        self.__Tplots()
+        self.__OFRplots()
+        if self.device.model == 2:
+            self.__TECplots()
+
+#####################################################################
+
+        ## Define a top level widget to hold the controls
+        self.widgets = QtGui.QWidget()
+        self.widgets.setWindowTitle("OCU: Organics Coating Unit")
+        self.widgets.showFullScreen()
+
+        ## Create infotext widgets to be placed inside
+        self.lblLamp      = QtGui.QLabel("Lamps")
+        self.lblVOCTctr   = QtGui.QLabel("VOC heater")
+        self.lblBath      = QtGui.QLabel("rH:")
+        self.lblBathrH    = QtGui.QLabel("")
+        self.lblTubeT     = QtGui.QLabel("VOC: XX degC")
+        self.lblVOC1      = QtGui.QLabel("VOC1 ()")
+        self.lblVOC2      = QtGui.QLabel("VOC2 ()")
+        self.lblPump1     = QtGui.QLabel("Pump1")
+        self.lblPump2     = QtGui.QLabel("Pump2")
+        self.lblLampsData = QtGui.QLabel("ORF: XX degC, XXXX uA")
+        self.lblInletData = QtGui.QLabel("Inlet: XX degC, XX% rH")
+        
+        self.lblCD        = QtGui.QLabel("0")
+
+        ## Create button widgets for actions
+        self.button_size  = 27
+        self.btnLamp      = QtGui.QPushButton("")            # Turn lamps on or off
+        self.btnLamp.setFixedWidth(self.button_size)
+        self.btnLamp.setFixedHeight(self.button_size)
+        self.btnVOCTctr   = QtGui.QPushButton("")            # Turn VOC heater on or off
+        self.btnVOCTctr.setFixedHeight(self.button_size)
+        self.btnVOCTctr.setFixedWidth(self.button_size)
+        self.btnBath      = QtGui.QPushButton("")            # Turn rH control on/off
+        self.btnBath.setFixedWidth(self.button_size)
+        self.btnBath.setFixedHeight(self.button_size)
+        self.btnTube      = QtGui.QPushButton("")             # Turn Tube Heating on/off
+        self.btnTube.setFixedWidth(self.button_size)
+        self.btnTube.setFixedHeight(self.button_size)
+        self.btnVOC1      = QtGui.QPushButton("")             # TURN VOC1 control on/off
+        self.btnVOC1.setFixedWidth(self.button_size)
+        self.btnVOC1.setFixedHeight(self.button_size)
+        self.btnVOC2      = QtGui.QPushButton("")            # TURN VOC2 control on/off
+        self.btnVOC2.setFixedWidth(self.button_size)
+        self.btnVOC2.setFixedHeight(self.button_size)
+        self.btnPump1     = QtGui.QPushButton("")            # Turn pump 1 on/off
+        self.btnPump1.setFixedWidth(self.button_size)
+        self.btnPump1.setFixedHeight(self.button_size)
+        self.btnPump2     = QtGui.QPushButton("")            # Turn pump 2 on/off
+        self.btnPump2.setFixedWidth(self.button_size)
+        self.btnPump2.setFixedHeight(self.button_size)
+
+        self.btnLamp.clicked.connect(self.toggleAllLamps)
+        self.btnVOCTctr.clicked.connect(self.toggleVOCHeater)
+        self.btnVOC1.clicked.connect(self.toggleVOC1)
+        self.btnVOC2.clicked.connect(self.toggleVOC2)
+        self.btnPump1.clicked.connect(self.togglePump1)
+        self.btnPump2.clicked.connect(self.togglePump2)
+        self.btnBath.clicked.connect(self.togglerH)
+
+        ## Create widgets for controlling MFC2
+        self.btnMFC2      = QtGui.QPushButton(">>")  # Sends new MFC2 flow
+        self.btnMFC2.setFixedWidth(self.button_size)
+        self.btnMFC2.setFixedHeight(self.button_size)
+        self.btnMFC2.clicked.connect(self.setMFC2)
+        self.lblMFC2      = QtGui.QLabel("MFC2 (mlpm):")
+        self.spMFC2       = QtGui.QSpinBox()
+        self.spMFC2.setRange(0,100)
+
+        ## Create widgets for controlling VOC1
+        self.btnSVOC1      = QtGui.QPushButton(">>")  # Sends new MFC2 flow
+        self.btnSVOC1.setFixedWidth(self.button_size)
+        self.btnSVOC1.setFixedHeight(self.button_size)
+        self.btnSVOC1.clicked.connect(self.setSVOC1)
+        self.lblSVOC1      = QtGui.QLabel("VOC1 (mV):")
+        self.spSVOC1       = QtGui.QSpinBox()
+        self.spSVOC1.setRange(0,2500)
+
+        ## Create widgets for controlling VOC Heater
+        self.btnVOCT       = QtGui.QPushButton(">>")  # Sends new MFC2 flow
+        self.btnVOCT.setFixedWidth(self.button_size)
+        self.btnVOCT.setFixedHeight(self.button_size)
+        self.btnVOCT.clicked.connect(self.setVOCT)
+        self.lblVOCT       = QtGui.QLabel("VOC (degC):")
+        self.spVOCT        = QtGui.QSpinBox()
+        self.spVOCT.setRange(0,80)
+        
+        ## Create widgets for controlling rH
+        self.btnRH         = QtGui.QPushButton(">>")  # Sends new MFC2 flow
+        self.btnRH.setFixedWidth(self.button_size)
+        self.btnRH.setFixedHeight(self.button_size)
+        self.btnRH.clicked.connect(self.setRH)
+        self.lblRH       = QtGui.QLabel("rH (%):")
+        self.spRH        = QtGui.QSpinBox()
+        self.spRH.setRange(0,95)
+        self.lblBathT    = QtGui.QLabel("Bath (degC):") # tbath container
+
+        ## Create widgets for serial commands
+        self.btnSERIAL     = QtGui.QPushButton(">>")  # Sends new MFC2 flow
+        self.btnSERIAL.setFixedWidth(self.button_size)
+        self.btnSERIAL.setFixedHeight(self.button_size)
+        self.btnSERIAL.clicked.connect(self.sendSerialCMD)
+        self.lblSERIAL     = QtGui.QLabel("Command:")
+        self.lineSERIAL    = QtGui.QLineEdit()
+        validator = QtGui.QRegExpValidator(QtCore.QRegExp("[abFpirRXzZ][0-9]{4}"))
+        if self.device.model == 2:
+            validator = QtGui.QRegExpValidator(QtCore.QRegExp("[abFgHhuDpirRXzZ][0-9]{4}"))
+        self.lineSERIAL.setValidator(validator)
+
+        ## Create widgets for TEC commands
+        if self.device.model == 2:
+            self.__TECwidgets()
+
+            ## Info of current TEC Modes and temperatures
+            self.lblTEC1mode   = QtGui.QLabel("TEC1 (mode)")
+            self.lblTEC2mode   = QtGui.QLabel("TEC2 (mode)")
+
+            ## Temporary label with TEC Status
+            self.lblTECStatus   = QtGui.QLabel("TEC Status: - STATUS TEXT -")
+            self.lblTECStatus.setWordWrap(True)
+            
+
+        ## Create a grid layout to manage the controls size and position
+        self.controlsLayout = QtGui.QGridLayout()
+        self.encloserLayout = QtGui.QVBoxLayout()
+        self.lampsButtonsLayout = QtGui.QHBoxLayout()
+        self.mfcLayout = QtGui.QGridLayout()
+        self.encloserLayout.addLayout(self.controlsLayout)
+        self.encloserLayout.addLayout(self.lampsButtonsLayout)
+        self.encloserLayout.addLayout(self.mfcLayout)
+        if self.lblTECStatus:
+            self.encloserLayout.addWidget(self.lblTECStatus)
+        self.encloserLayout.addStretch(1)
+
+        ## Create individual lamp buttons
+        self.lamps = []
+        for i in range(5):
+            self.lamps.append(i)
+            self.lamps[i] = QtGui.QPushButton("L{}".format(i))
+            self.lamps[i].setFixedWidth(1.2*self.button_size)
+            self.lamps[i].setFixedHeight(self.button_size)
+            self.lamps[i].clicked.connect(partial(self.toggleLamp,i))
+            self.lampsButtonsLayout.addWidget(self.lamps[i])
+
+        ## Add widgets to the layout in their proper positions
+        self.controlsLayout.addWidget(self.lblLamp,      0, 1)
+        if self.device.model == 1:
+            self.controlsLayout.addWidget(self.lblVOCTctr,   1, 1)
+        self.controlsLayout.addWidget(self.lblVOC1,      2, 1)
+        self.controlsLayout.addWidget(self.lblVOC2,      3, 1)
+        self.controlsLayout.addWidget(self.lblPump1,     4, 1)
+        self.controlsLayout.addWidget(self.lblPump2,     5, 1)
+        self.controlsLayout.addWidget(self.lblBathrH,    6, 1)
+        self.controlsLayout.addWidget(self.lblBathT,     7, 1)
+
+##        self.controlsLayout.addWidget(self.lblCD,    9, 0, 1, 2) # example of two spaces horizontal (one vertical)
+
+        self.controlsLayout.addWidget(self.btnLamp,     0, 0)
+        if self.device.model == 1:
+            self.controlsLayout.addWidget(self.btnVOCTctr,  1, 0)
+        self.controlsLayout.addWidget(self.btnVOC1,     2, 0)
+        self.controlsLayout.addWidget(self.btnVOC2,     3, 0)
+        self.controlsLayout.addWidget(self.btnPump1,    4, 0)
+        self.controlsLayout.addWidget(self.btnPump2,    5, 0)
+        self.controlsLayout.addWidget(self.btnBath,     6, 0)
+
+        ## Add Widgets to the MFCLayout
+        self.mfcLayout.addWidget(self.lblSVOC1,    0, 0)
+        self.mfcLayout.addWidget(self.spSVOC1,     0, 1)
+        self.mfcLayout.addWidget(self.btnSVOC1,    0, 2)
+        if self.device.model == 1:
+            self.mfcLayout.addWidget(self.lblVOCT,     1, 0)
+            self.mfcLayout.addWidget(self.spVOCT,      1, 1)
+            self.mfcLayout.addWidget(self.btnVOCT,     1, 2)
+        self.mfcLayout.addWidget(self.lblMFC2,     2, 0)
+        self.mfcLayout.addWidget(self.spMFC2,      2, 1)
+        self.mfcLayout.addWidget(self.btnMFC2,     2, 2)
+        self.mfcLayout.addWidget(self.lblRH,       3, 0)
+        self.mfcLayout.addWidget(self.spRH,        3, 1)
+        self.mfcLayout.addWidget(self.btnRH,       3, 2)
+        self.mfcLayout.addWidget(self.lblSERIAL,   4, 0)
+        self.mfcLayout.addWidget(self.lineSERIAL,  4, 1)
+        self.mfcLayout.addWidget(self.btnSERIAL,   4, 2)
+        
+        ## Create a QVBox layout to manage the Info and plots
+        self.infoLayout = QtGui.QVBoxLayout()
+
+        ## Create a QHBox for the text info
+        self.textLayout = QtGui.QHBoxLayout()
+        self.textLayout.addWidget(self.lblLampsData)
+        self.textLayout.addItem(QtGui.QSpacerItem(30, 0))
+        self.textLayout.addWidget(self.lblInletData)
+        self.textLayout.addItem(QtGui.QSpacerItem(30, 0))
+        if self.device.model == 1:
+            self.textLayout.addWidget(self.lblTubeT)
+        elif self.device.model == 2:
+            self.textLayout.addWidget(self.lblTEC1mode)
+            self.textLayout.addWidget(self.lblTEC2mode)
+
+        ## First line of the pidLayout has the status text (temps at.s.o.)
+        self.infoLayout.addLayout(self.textLayout)
+        
+        ## Now the plots
+        self.pidLayout = QtGui.QVBoxLayout()
+        self.pidLayout.addWidget(self.PIDplot)
+        self.pidLayout.addWidget(self.Fplot)
+
+        self.rhLayout = QtGui.QVBoxLayout()
+        self.rhLayout.addWidget(self.RHplot)
+        self.rhLayout.addWidget(self.Tplot)
+
+        self.ofrLayout = QtGui.QVBoxLayout()
+        self.ofrLayout.addWidget(self.OFRUVplot)
+        self.ofrLayout.addWidget(self.OFRTplot)
+
+        ## Prepare tabs and add plots
+        self.dataTab = QtGui.QTabWidget()
+        ## TabPID for PID and Flow plots
+        self.dataTab.tabPID = QtGui.QWidget()
+        self.dataTab.addTab(self.dataTab.tabPID,"VOC / Flow")
+        self.dataTab.tabPID.setLayout(self.pidLayout)
+
+        if self.device.model == 2:
+            self.tecLayout = QtGui.QVBoxLayout()
+            self.tecLayout.addLayout(self.tecControlLayout)
+            self.tecLayout.addWidget(self.TECplot)
+            
+            ## Prepare tabs
+            self.dataTab.tabTEC = QtGui.QWidget()
+            self.dataTab.addTab(self.dataTab.tabTEC,"TEC Control")
+            self.dataTab.tabTEC.setLayout(self.tecLayout)
+            self.infoLayout.addWidget(self.dataTab)
+
+        ## TabRH for rH and Temp plots
+        self.dataTab.tabRH = QtGui.QWidget()
+        self.dataTab.addTab(self.dataTab.tabRH,"rH / Temp")
+        self.dataTab.tabRH.setLayout(self.rhLayout)
+        ## TabOFR for OFR plots
+        self.dataTab.tabOFR = QtGui.QWidget()
+        self.dataTab.addTab(self.dataTab.tabOFR,"OFR")
+        self.dataTab.tabOFR.setLayout(self.ofrLayout)
+
+        ## Create a QHBox layout to manage the plots
+        self.centralLayout = QtGui.QHBoxLayout()
+
+        self.centralLayout.addLayout(self.encloserLayout)
+        self.centralLayout.addLayout(self.infoLayout)
+
+        ## Display the widget as a new window
+        self.widgets.setLayout(self.centralLayout)
+        self.widgets.show()
+
+    def __dataStructure(self):
         #init data structure
         self.datastring = ""
         self.graphLength = 600 # seconds
@@ -236,8 +498,8 @@ class Visualizer(object):
             "K1 VCC",
             "K1 Open",
             "Pt1000A General Error",
-            "Pt1000A Open",
-            "Pt1000A Short",
+            "tec2mode",
+            "tec1mode",
             "tec2",
             "tec1"
             ]
@@ -256,14 +518,10 @@ class Visualizer(object):
         for k in self.tecKeys:
             self.tecDict[k] = 0
 
-        # setup plots
-        self.pen = pg.mkPen('y', width=1)
-        self.t = np.linspace(-self.graphLength, 0, self.numSamples)
-
+    def __PIDplots(self):
         self.PIDcurves = dict()
         self.PIDplot = pg.PlotWidget()
         self.PIDplot.addLegend()
-        #self.PIDplot.setRange(yRange=[0, 900])
         self.PIDplot.setLabel('left', "PID voltage", units='mV')
         self.PIDplot.setLabel('bottom', "t", units='s')
         self.PIDplot.showGrid(False, True)
@@ -272,6 +530,7 @@ class Visualizer(object):
         self.PIDcurves[2] = self.PIDplot.plot(self.t, self.df['svoc2'], pen=pg.mkPen('r', width=1, style=QtCore.Qt.DashLine))
         self.PIDcurves[3] = self.PIDplot.plot(self.t, self.df['voc2'], pen=pg.mkPen('r', width=1), name='PID2')
         
+    def __Fplots(self):
         self.Fcurves = dict()
         self.Fplot = pg.PlotWidget()
         self.Fplot.addLegend()
@@ -284,6 +543,7 @@ class Visualizer(object):
         # currently the set variable does not exists
         #self.Fcurves[3] = self.Fplot.plot(self.t, self.df['smfc2'], pen=pg.mkPen('r', width=1, style=QtCore.Qt.DashLine))
 
+    def __RHplots(self):
         self.RHcurves = dict()
         self.RHplot = pg.PlotWidget()
         self.RHplot.addLegend()
@@ -293,6 +553,7 @@ class Visualizer(object):
         self.RHcurves[0] = self.RHplot.plot(self.t, self.df['sinrH'], pen=pg.mkPen('y', width=1, style=QtCore.Qt.DashLine))
         self.RHcurves[1] = self.RHplot.plot(self.t, self.df['inrH'], pen=pg.mkPen('y', width=1))
 
+    def __Tplots(self):
         self.Tcurves = dict()
         self.Tplot = pg.PlotWidget()
         self.Tplot.addLegend()
@@ -302,6 +563,7 @@ class Visualizer(object):
         self.Tcurves[0] = self.Tplot.plot(self.t, self.df['inT'], pen=pg.mkPen('y', width=1), name='Inlet')
         self.Tcurves[1] = self.Tplot.plot(self.t, self.df['tbath'], pen=pg.mkPen('r', width=1), name='rH bath')
 
+    def __OFRplots(self):
         self.OFRTcurves = dict()
         self.OFRTplot = pg.PlotWidget()
         self.OFRTplot.addLegend()
@@ -318,315 +580,64 @@ class Visualizer(object):
         self.OFRUVplot.showGrid(False, True)
         self.OFRUVcurves[0] = self.OFRUVplot.plot(self.t, self.df['iuv'], pen=pg.mkPen('y', width=1))
         
-        if self.device.model == 2:
-            self.TECcurves = dict()
+    def __TECplots(self):
+        self.TECcurves = dict()
 
-            self.TECplot = pg.PlotWidget()
-            self.TECplot.addLegend()
-            self.TECplot.setLabel('left', "TEC Temp", units='degC')
-            self.TECplot.setLabel('bottom', "t", units='s')
-            self.TECplot.showGrid(False, True)
-            self.TECcurves[0] = self.TECplot.plot(self.t, self.df['sb1'], pen=pg.mkPen('y', width=1, style=QtCore.Qt.DashLine))
-            self.TECcurves[1] = self.TECplot.plot(self.t, self.df['b1'], pen=pg.mkPen('y', width=1), name='TEC1')
-            self.TECcurves[2] = self.TECplot.plot(self.t, self.df['sb2'], pen=pg.mkPen('r', width=1, style=QtCore.Qt.DashLine))
-            self.TECcurves[3] = self.TECplot.plot(self.t, self.df['b2'], pen=pg.mkPen('r', width=1), name='TEC2')
+        self.TECplot = pg.PlotWidget()
+        self.TECplot.addLegend()
+        self.TECplot.setLabel('left', "TEC Temp", units='degC')
+        self.TECplot.setLabel('bottom', "t", units='s')
+        self.TECplot.showGrid(False, True)
+        self.TECcurves[0] = self.TECplot.plot(self.t, self.df['sb1'], pen=pg.mkPen('y', width=1, style=QtCore.Qt.DashLine))
+        self.TECcurves[1] = self.TECplot.plot(self.t, self.df['b1'], pen=pg.mkPen('y', width=1), name='TEC1')
+        self.TECcurves[2] = self.TECplot.plot(self.t, self.df['sb2'], pen=pg.mkPen('r', width=1, style=QtCore.Qt.DashLine))
+        self.TECcurves[3] = self.TECplot.plot(self.t, self.df['b2'], pen=pg.mkPen('r', width=1), name='TEC2')
 
-
-#####################################################################
-
-        ## Define a top level widget to hold the controls
-        self.widgets = QtGui.QWidget()
-        self.widgets.setWindowTitle("OCU: Organics Coating Unit")
-        self.widgets.showFullScreen()
-
-        ## Create infotext widgets to be placed inside
-        self.lblLamp      = QtGui.QLabel("Lamps")
-        self.lblVOCTctr   = QtGui.QLabel("VOC heater")
-        self.lblBath      = QtGui.QLabel("rH:")
-        self.lblBathrH    = QtGui.QLabel("")
-        self.lblTubeT     = QtGui.QLabel("VOC: XX degC")
-        self.lblVOC1      = QtGui.QLabel("VOC1 ()")
-        self.lblVOC2      = QtGui.QLabel("VOC2 ()")
-        self.lblPump1     = QtGui.QLabel("Pump1")
-        self.lblPump2     = QtGui.QLabel("Pump2")
-        self.lblLampsData = QtGui.QLabel("ORF: XX degC, XXXX uA")
-        self.lblInletData = QtGui.QLabel("Inlet: XX degC, XX% rH")
-        
-        self.lblCD        = QtGui.QLabel("0")
-
-        ## Create button widgets for actions
-        button_size  = 27
-        self.btnLamp      = QtGui.QPushButton("")            # Turn lamps on or off
-        self.btnLamp.setFixedWidth(button_size)
-        self.btnLamp.setFixedHeight(button_size)
-        self.btnVOCTctr   = QtGui.QPushButton("")            # Turn VOC heater on or off
-        self.btnVOCTctr.setFixedHeight(button_size)
-        self.btnVOCTctr.setFixedWidth(button_size)
-        self.btnBath      = QtGui.QPushButton("")            # Turn rH control on/off
-        self.btnBath.setFixedWidth(button_size)
-        self.btnBath.setFixedHeight(button_size)
-        self.btnTube      = QtGui.QPushButton("")             # Turn Tube Heating on/off
-        self.btnTube.setFixedWidth(button_size)
-        self.btnTube.setFixedHeight(button_size)
-        self.btnVOC1      = QtGui.QPushButton("")             # TURN VOC1 control on/off
-        self.btnVOC1.setFixedWidth(button_size)
-        self.btnVOC1.setFixedHeight(button_size)
-        self.btnVOC2      = QtGui.QPushButton("")            # TURN VOC2 control on/off
-        self.btnVOC2.setFixedWidth(button_size)
-        self.btnVOC2.setFixedHeight(button_size)
-        self.btnPump1     = QtGui.QPushButton("")            # Turn pump 1 on/off
-        self.btnPump1.setFixedWidth(button_size)
-        self.btnPump1.setFixedHeight(button_size)
-        self.btnPump2     = QtGui.QPushButton("")            # Turn pump 2 on/off
-        self.btnPump2.setFixedWidth(button_size)
-        self.btnPump2.setFixedHeight(button_size)
-
-        self.btnLamp.clicked.connect(self.toggleAllLamps)
-        self.btnVOCTctr.clicked.connect(self.toggleVOCHeater)
-        self.btnVOC1.clicked.connect(self.toggleVOC1)
-        self.btnVOC2.clicked.connect(self.toggleVOC2)
-        self.btnPump1.clicked.connect(self.togglePump1)
-        self.btnPump2.clicked.connect(self.togglePump2)
-        self.btnBath.clicked.connect(self.togglerH)
-
-        ## Create widgets for controlling MFC2
-        self.btnMFC2      = QtGui.QPushButton(">>")  # Sends new MFC2 flow
-        self.btnMFC2.setFixedWidth(button_size)
-        self.btnMFC2.setFixedHeight(button_size)
-        self.btnMFC2.clicked.connect(self.setMFC2)
-        self.lblMFC2      = QtGui.QLabel("MFC2 (mlpm):")
-        self.spMFC2       = QtGui.QSpinBox()
-        self.spMFC2.setRange(0,100)
-
-        ## Create widgets for controlling VOC1
-        self.btnSVOC1      = QtGui.QPushButton(">>")  # Sends new MFC2 flow
-        self.btnSVOC1.setFixedWidth(button_size)
-        self.btnSVOC1.setFixedHeight(button_size)
-        self.btnSVOC1.clicked.connect(self.setSVOC1)
-        self.lblSVOC1      = QtGui.QLabel("VOC1 (mV):")
-        self.spSVOC1       = QtGui.QSpinBox()
-        self.spSVOC1.setRange(0,2500)
-
-        ## Create widgets for controlling VOC Heater
-        self.btnVOCT       = QtGui.QPushButton(">>")  # Sends new MFC2 flow
-        self.btnVOCT.setFixedWidth(button_size)
-        self.btnVOCT.setFixedHeight(button_size)
-        self.btnVOCT.clicked.connect(self.setVOCT)
-        self.lblVOCT       = QtGui.QLabel("VOC (degC):")
-        self.spVOCT        = QtGui.QSpinBox()
-        self.spVOCT.setRange(0,80)
-        
-        ## Create widgets for controlling rH
-        self.btnRH         = QtGui.QPushButton(">>")  # Sends new MFC2 flow
-        self.btnRH.setFixedWidth(button_size)
-        self.btnRH.setFixedHeight(button_size)
-        self.btnRH.clicked.connect(self.setRH)
-        self.lblRH       = QtGui.QLabel("rH (%):")
-        self.spRH        = QtGui.QSpinBox()
-        self.spRH.setRange(0,95)
-        self.lblBathT    = QtGui.QLabel("Bath (degC):") # tbath container
-
-        ## Create widgets for serial commands
-        self.btnSERIAL     = QtGui.QPushButton(">>")  # Sends new MFC2 flow
-        self.btnSERIAL.setFixedWidth(button_size)
-        self.btnSERIAL.setFixedHeight(button_size)
-        self.btnSERIAL.clicked.connect(self.sendSerialCMD)
-        self.lblSERIAL     = QtGui.QLabel("Command:")
-        self.lineSERIAL    = QtGui.QLineEdit()
-        validator = QtGui.QRegExpValidator(QtCore.QRegExp("[abFpirRXzZ][0-9]{4}"))
-        if self.device.model == 2:
-            validator = QtGui.QRegExpValidator(QtCore.QRegExp("[abFgHhuDpirRXzZ][0-9]{4}"))
-        self.lineSERIAL.setValidator(validator)
-
+    def __TECwidgets(self):
         ## Create widgets for TEC commands
-        if self.device.model == 2:
-            self.btnTEC1       = QtGui.QPushButton("")            # Turn TEC1 on or off
-            self.btnTEC1.setFixedWidth(button_size)
-            self.btnTEC1.setFixedHeight(button_size)
-            self.btnTEC1.clicked.connect(self.toggleTEC1)
-            self.btnTEC1set    = QtGui.QPushButton(">>")          # Sends new TEC1 setpoint
-            self.btnTEC1set.setFixedWidth(button_size)
-            self.btnTEC1set.setFixedHeight(button_size)
-            self.btnTEC1set.clicked.connect(self.setTEC1)
-            self.lblTEC1       = QtGui.QLabel("TEC1 (degC):")
-            self.spTEC1        = QtGui.QSpinBox()
-            self.spTEC1.setRange(10,80)
+        button_size = self.button_size*3 
+        self.btnTEC1heat   = QtGui.QPushButton("heat")        # Turn TEC1 heat on or off
+        self.btnTEC1heat.setFixedWidth(button_size)
+        self.btnTEC1heat.clicked.connect(self.toggleTEC1heat)
+        self.btnTEC1cool   = QtGui.QPushButton("cool")        # Turn TEC1 cool on or off
+        self.btnTEC1cool.setFixedWidth(button_size)
+        self.btnTEC1cool.clicked.connect(self.toggleTEC1cool)
+        self.btnTEC1set    = QtGui.QPushButton(">>")          # Sends new TEC1 setpoint
+        self.btnTEC1set.setFixedWidth(self.button_size)
+        self.btnTEC1set.setFixedHeight(self.button_size)
+        self.btnTEC1set.clicked.connect(self.setTEC1)
+        self.lblTEC1       = QtGui.QLabel("TEC1 (degC):")
+        self.spTEC1        = QtGui.QSpinBox()
+        self.spTEC1.setRange(10,80)
 
-            self.cbTEC1 = QtGui.QComboBox()
-            self.cbTEC1.addItem("cool")
-            self.cbTEC1.addItem("heat")
-            #self.cbTEC1.activated.connect(self.TEC1Mode)    # Cooling/Heating
-            self.cbTEC2 = QtGui.QComboBox()
-            self.cbTEC2.addItem("cool")
-            self.cbTEC2.addItem("heat")
-            #self.cbTEC1.activated.connect(self.TEC2Mode)    # Cooling/Heating
+        self.btnTEC2heat   = QtGui.QPushButton("heat")        # Turn TEC1 heat on or off
+        self.btnTEC2heat.setFixedWidth(button_size)
+        self.btnTEC2heat.clicked.connect(self.toggleTEC2heat)
+        self.btnTEC2cool   = QtGui.QPushButton("cool")        # Turn TEC1 cool on or off
+        self.btnTEC2cool.setFixedWidth(button_size)
+        self.btnTEC2cool.clicked.connect(self.toggleTEC2cool)
+        self.btnTEC2set    = QtGui.QPushButton(">>")         # Sends new TEC2 setpoint
+        self.btnTEC2set.setFixedWidth(self.button_size)
+        self.btnTEC2set.setFixedHeight(self.button_size)
+        self.btnTEC2set.clicked.connect(self.setTEC2)
+        self.lblTEC2       = QtGui.QLabel("TEC2 (degC):")
+        self.spTEC2        = QtGui.QSpinBox()
+        self.spTEC2.setRange(0,80)
 
-            self.btnTEC2       = QtGui.QPushButton("")           # Turn TEC2 on or off
-            self.btnTEC2.setFixedWidth(button_size)
-            self.btnTEC2.setFixedHeight(button_size)
-            self.btnTEC2.clicked.connect(self.toggleTEC2)
-            self.btnTEC2set    = QtGui.QPushButton(">>")         # Sends new TEC2 setpoint
-            self.btnTEC2set.setFixedWidth(button_size)
-            self.btnTEC2set.setFixedHeight(button_size)
-            self.btnTEC2set.clicked.connect(self.setTEC2)
-            self.lblTEC2       = QtGui.QLabel("TEC2 (degC):")
-            self.spTEC2        = QtGui.QSpinBox()
-            self.spTEC2.setRange(0,80)
+        ## Create a grid layout to manage the TEC controls size and position
+        self.tecControlLayout = QtGui.QGridLayout()
 
-            ## Info of current TEC Modes and temperatures
-            self.lblTEC1mode   = QtGui.QLabel("TEC1 (mode)")
-            self.lblTEC2mode   = QtGui.QLabel("TEC2 (mode)")
+        self.tecControlLayout.addWidget(self.btnTEC1heat,  0, 0)
+        self.tecControlLayout.addWidget(self.btnTEC1cool,  0, 1)
+        self.tecControlLayout.addWidget(self.lblTEC1,      0, 2)
+        self.tecControlLayout.addWidget(self.spTEC1,       0, 3)
+        self.tecControlLayout.addWidget(self.btnTEC1set,   0, 4)
 
-            ## Create a grid layout to manage the TEC controls size and position
-            self.tecControlLayout = QtGui.QGridLayout()
-
-            self.tecControlLayout.addWidget(self.btnTEC1,      0, 0)
-            self.tecControlLayout.addWidget(self.lblTEC1,      0, 1)
-            self.tecControlLayout.addWidget(self.cbTEC1,       0, 2)
-            self.tecControlLayout.addWidget(self.spTEC1,       0, 3)
-            self.tecControlLayout.addWidget(self.btnTEC1set,   0, 4)
-
-            self.tecControlLayout.addWidget(self.btnTEC2,      1, 0)
-            self.tecControlLayout.addWidget(self.lblTEC2,      1, 1)
-            self.tecControlLayout.addWidget(self.cbTEC2,       1, 2)
-            self.tecControlLayout.addWidget(self.spTEC2,       1, 3)
-            self.tecControlLayout.addWidget(self.btnTEC2set,   1, 4)
-
-            ## Temporary label with TEC Status
-            self.lblTECStatus   = QtGui.QLabel("TEC Status: - STATUS TEXT -")
-            #self.lblTECStatus.setFixedWidth(self.lblTECStatus.sizeHint().width())
-            self.lblTECStatus.setWordWrap(True)
-            
-
-        ## Create a grid layout to manage the controls size and position
-        self.controlsLayout = QtGui.QGridLayout()
-        self.encloserLayout = QtGui.QVBoxLayout()
-        self.lampsButtonsLayout = QtGui.QHBoxLayout()
-        self.mfcLayout = QtGui.QGridLayout()
-        self.encloserLayout.addLayout(self.controlsLayout)
-        self.encloserLayout.addLayout(self.lampsButtonsLayout)
-        self.encloserLayout.addLayout(self.mfcLayout)
-        if self.lblTECStatus:
-            self.encloserLayout.addWidget(self.lblTECStatus)
-        self.encloserLayout.addStretch(1)
-
-        ## Create individual lamp buttons
-        self.lamps = []
-        for i in range(5):
-            self.lamps.append(i)
-            self.lamps[i] = QtGui.QPushButton("L{}".format(i))
-            self.lamps[i].setFixedWidth(1.2*button_size)
-            self.lamps[i].setFixedHeight(button_size)
-            self.lamps[i].clicked.connect(partial(self.toggleLamp,i))
-            self.lampsButtonsLayout.addWidget(self.lamps[i])
-
-        ## Add widgets to the layout in their proper positions
-        self.controlsLayout.addWidget(self.lblLamp,      0, 1)
-        if self.device.model == 1:
-            self.controlsLayout.addWidget(self.lblVOCTctr,   1, 1)
-        self.controlsLayout.addWidget(self.lblVOC1,      2, 1)
-        self.controlsLayout.addWidget(self.lblVOC2,      3, 1)
-        self.controlsLayout.addWidget(self.lblPump1,     4, 1)
-        self.controlsLayout.addWidget(self.lblPump2,     5, 1)
-        self.controlsLayout.addWidget(self.lblBathrH,    6, 1)
-        self.controlsLayout.addWidget(self.lblBathT,     7, 1)
-
-##        self.controlsLayout.addWidget(self.lblCD,    9, 0, 1, 2) # example of two spaces horizontal (one vertical)
-
-        self.controlsLayout.addWidget(self.btnLamp,     0, 0)
-        if self.device.model == 1:
-            self.controlsLayout.addWidget(self.btnVOCTctr,  1, 0)
-        self.controlsLayout.addWidget(self.btnVOC1,     2, 0)
-        self.controlsLayout.addWidget(self.btnVOC2,     3, 0)
-        self.controlsLayout.addWidget(self.btnPump1,    4, 0)
-        self.controlsLayout.addWidget(self.btnPump2,    5, 0)
-        self.controlsLayout.addWidget(self.btnBath,     6, 0)
-
-        ## Add Widgets to the MFCLayout
-        self.mfcLayout.addWidget(self.lblSVOC1,    0, 0)
-        self.mfcLayout.addWidget(self.spSVOC1,     0, 1)
-        self.mfcLayout.addWidget(self.btnSVOC1,    0, 2)
-        if self.device.model == 1:
-            self.mfcLayout.addWidget(self.lblVOCT,     1, 0)
-            self.mfcLayout.addWidget(self.spVOCT,      1, 1)
-            self.mfcLayout.addWidget(self.btnVOCT,     1, 2)
-        self.mfcLayout.addWidget(self.lblMFC2,     2, 0)
-        self.mfcLayout.addWidget(self.spMFC2,      2, 1)
-        self.mfcLayout.addWidget(self.btnMFC2,     2, 2)
-        self.mfcLayout.addWidget(self.lblRH,       3, 0)
-        self.mfcLayout.addWidget(self.spRH,        3, 1)
-        self.mfcLayout.addWidget(self.btnRH,       3, 2)
-        self.mfcLayout.addWidget(self.lblSERIAL,   4, 0)
-        self.mfcLayout.addWidget(self.lineSERIAL,  4, 1)
-        self.mfcLayout.addWidget(self.btnSERIAL,   4, 2)
-        
-        ## Create a QVBox layout to manage the Info and plots
-        self.infoLayout = QtGui.QVBoxLayout()
-
-        ## Create a QHBox for the text info
-        self.textLayout = QtGui.QHBoxLayout()
-        self.textLayout.addWidget(self.lblLampsData)
-        self.textLayout.addItem(QtGui.QSpacerItem(30, 0))
-        self.textLayout.addWidget(self.lblInletData)
-        self.textLayout.addItem(QtGui.QSpacerItem(30, 0))
-        if self.device.model == 1:
-            self.textLayout.addWidget(self.lblTubeT)
-        elif self.device.model == 2:
-            self.textLayout.addWidget(self.lblTEC1mode)
-            self.textLayout.addWidget(self.lblTEC2mode)
-
-        ## First line of the pidLayout has the status text (temps at.s.o.)
-        self.infoLayout.addLayout(self.textLayout)
-        
-        ## Now the plots
-        self.pidLayout = QtGui.QVBoxLayout()
-        self.pidLayout.addWidget(self.PIDplot)
-        self.pidLayout.addWidget(self.Fplot)
-
-        self.rhLayout = QtGui.QVBoxLayout()
-        self.rhLayout.addWidget(self.RHplot)
-        self.rhLayout.addWidget(self.Tplot)
-
-        self.ofrLayout = QtGui.QVBoxLayout()
-        self.ofrLayout.addWidget(self.OFRUVplot)
-        self.ofrLayout.addWidget(self.OFRTplot)
-
-        ## Prepare tabs and add plots
-        self.dataTab = QtGui.QTabWidget()
-        ## TabPID for PID and Flow plots
-        self.dataTab.tabPID = QtGui.QWidget()
-        self.dataTab.addTab(self.dataTab.tabPID,"VOC / Flow")
-        self.dataTab.tabPID.setLayout(self.pidLayout)
-
-        if self.device.model == 2:
-            self.tecLayout = QtGui.QVBoxLayout()
-            self.tecLayout.addLayout(self.tecControlLayout)
-            self.tecLayout.addWidget(self.TECplot)
-            
-            ## Prepare tabs
-            self.dataTab.tabTEC = QtGui.QWidget()
-            self.dataTab.addTab(self.dataTab.tabTEC,"TEC Control")
-            self.dataTab.tabTEC.setLayout(self.tecLayout)
-            self.infoLayout.addWidget(self.dataTab)
-
-        ## TabRH for rH and Temp plots
-        self.dataTab.tabRH = QtGui.QWidget()
-        self.dataTab.addTab(self.dataTab.tabRH,"rH / Temp")
-        self.dataTab.tabRH.setLayout(self.rhLayout)
-        ## TabOFR for OFR plots
-        self.dataTab.tabOFR = QtGui.QWidget()
-        self.dataTab.addTab(self.dataTab.tabOFR,"OFR")
-        self.dataTab.tabOFR.setLayout(self.ofrLayout)
-
-        ## Create a QHBox layout to manage the plots
-        self.centralLayout = QtGui.QHBoxLayout()
-
-        self.centralLayout.addLayout(self.encloserLayout)
-        self.centralLayout.addLayout(self.infoLayout)
-
-        ## Display the widget as a new window
-        self.widgets.setLayout(self.centralLayout)
-        self.widgets.show()
+        self.tecControlLayout.addWidget(self.btnTEC2heat,  1, 0)
+        self.tecControlLayout.addWidget(self.btnTEC2cool,  1, 1)
+        self.tecControlLayout.addWidget(self.lblTEC2,      1, 2)
+        self.tecControlLayout.addWidget(self.spTEC2,       1, 3)
+        self.tecControlLayout.addWidget(self.btnTEC2set,   1, 4)
 
     def update(self):
 
@@ -735,17 +746,6 @@ class Visualizer(object):
                     if self.device.model == 2:
                         self.spTEC1.setValue(int(newData['sb1']))
                         self.spTEC2.setValue(int(newData['sb2']))
-                        self.cbTEC1.setCurrentIndex(self.tecDict['tec1'])
-                            #self.cbTEC1.itemText(self.tecDict['tec1'])
-                        self.cbTEC2.setCurrentIndex(self.tecDict['tec2'])
-                            #self.cbTEC2.itemText(self.tecDict['tec2']))
-                    
-
-################# Example of color toggle
-##                if (newData['countdown'] % 2 == 0):
-##                    self.lblCD.setStyleSheet('color: black')
-##                else:
-##                    self.lblCD.setStyleSheet('color: red')
                 
                 if (self.lampDict['lamp0'] or self.lampDict['lamp1'] or self.lampDict['lamp2'] or
                     self.lampDict['lamp3'] or self.lampDict['lamp4']):
@@ -797,44 +797,79 @@ class Visualizer(object):
                     newDict = self.tecDict.copy()
                     newDict.pop('tec1', None)
                     newDict.pop('tec2', None)
+                    newDict.pop('tec1mode', None)
+                    newDict.pop('tec2mode', None)
+
+                    ### check if tec response corresponds with status
+                    if not (self.statusDict['tec1'] == self.tecDict['tec1']):
+                        txtStatus = txtStatus + "waiting for TEC1"
+                        hasStatus = 1
+                    if not (self.statusDict['tec2'] == self.tecDict['tec2']):
+                        txtStatus = txtStatus + "waiting for TEC2"
+                        hasStatus = 1
+
+                   ### check other possible error codes 
                     for key, status in newDict.items():
-                        if hasStatus:
-                            txtStatus = txtStatus + ", "
                         if status:
+                            if hasStatus:
+                                txtStatus = txtStatus + ", "
                             txtStatus = txtStatus + key
                             hasStatus = 1
+
+                    ### Display error if hasStatus flag exists
                     if hasStatus:
                         self.lblTECStatus.setText(txtStatus)
                         self.lblTECStatus.setStyleSheet("background-color: yellow; border: 1px solid black;")
                     else:
                         self.lblTECStatus.setText("TEC Status: OK")
                         self.lblTECStatus.setStyleSheet("background-color: lightgreen;  border: 0px;")
-                    if self.statusDict['tec1']:
-                        if self.tecDict['tec1']: # Heating = 1
+
+                    ### Check TEC1 status and mode
+                    if self.tecDict['tec1']:
+                        if self.tecDict['tec1mode']: # Heating = 1, Cooling or OFF = 0
                             self.lblTEC1mode.setStyleSheet('color: red')
                             self.lblTEC1.setStyleSheet('color: red')
+                            mode = "heat"
+                            self.btnTEC1cool.setEnabled(False)
+                            self.btnTEC1heat.setText("off")
                         else:
                             self.lblTEC1mode.setStyleSheet('color: blue')
                             self.lblTEC1.setStyleSheet('color: blue')
+                            mode = "cool"
+                            self.btnTEC1heat.setEnabled(False)
+                            self.btnTEC1cool.setText("off")
+                        self.lblTEC1mode.setText("".join(("TEC1: ", mode)))
                     else:
                         self.lblTEC1mode.setStyleSheet('color: black')
                         self.lblTEC1.setStyleSheet('color: black')
-                    if self.statusDict['tec2']:
-                        if self.tecDict['tec2']: # Heating = 1
+                        self.lblTEC1mode.setText("TEC: off")
+                        self.btnTEC1heat.setEnabled(True)
+                        self.btnTEC1heat.setText("heat")
+                        self.btnTEC1cool.setEnabled(True)
+                        self.btnTEC1cool.setText("cool")
+                        
+                    if self.tecDict['tec2']:
+                        if self.tecDict['tec2mode']: # Heating = 1, Cooling or OFF = 0
                             self.lblTEC2mode.setStyleSheet('color: red')
                             self.lblTEC2.setStyleSheet('color: red')
+                            self.btnTEC2cool.setEnabled(False)
+                            self.btnTEC2heat.setText("off")
+                            mode = "heat"
                         else:
                             self.lblTEC2mode.setStyleSheet('color: blue')
                             self.lblTEC2.setStyleSheet('color: blue')
+                            mode = "cool"
+                            self.btnTEC2heat.setEnabled(False)
+                            self.btnTEC2cool.setText("off")
+                        self.lblTEC2mode.setText("".join(("TEC2: ", mode)))
                     else:
                         self.lblTEC2mode.setStyleSheet('color: black')
                         self.lblTEC2.setStyleSheet('color: black')
-                    self.lblTEC1mode.setText("".join(("TEC1 (",
-                                            self.cbTEC1.itemText(self.tecDict['tec1']),
-                                            ")")))
-                    self.lblTEC2mode.setText("".join(("TEC2 (",
-                                            self.cbTEC2.itemText(self.tecDict['tec2']),
-                                            ")")))
+                        self.lblTEC2mode.setText("TEC2: off")
+                        self.btnTEC2heat.setEnabled(True)
+                        self.btnTEC2heat.setText("heat")
+                        self.btnTEC2cool.setEnabled(True)
+                        self.btnTEC2cool.setText("cool")
                                     
         except Exception as e:
             print >>sys.stderr, e
@@ -857,11 +892,11 @@ class Visualizer(object):
 
     def setTEC1(self):
         self.device.set_TEC(1, self.spTEC1.value() ,open_port = True)
-        self.device.set_TECMode(1, self.cbTEC1.currentIndex() ,open_port = True)
+#        self.device.set_TECMode(1, self.cbTEC1.currentIndex() ,open_port = True)
 
     def setTEC2(self):
         self.device.set_TEC(2, self.spTEC2.value() ,open_port = True)
-        self.device.set_TECMode(2, self.cbTEC2.currentIndex() ,open_port = True)
+#        self.device.set_TECMode(2, self.cbTEC2.currentIndex() ,open_port = True)
         
     def setRH(self):
         self.device.set_rH(self.spRH.value() ,open_port = True)
@@ -896,6 +931,38 @@ class Visualizer(object):
             commands = [self.device.tec1_off_str]
         else:
             commands = [self.device.tec1_on_str]
+        self.device.send_commands(commands, open_port = True)
+
+    def toggleTEC1heat(self):
+        if self.statusDict['tec1']:
+            commands = [self.device.tec1_off_str]
+        else:
+            commands = [self.device.tec1_on_str]
+            self.TEC1Mode(1)
+        self.device.send_commands(commands, open_port = True)
+
+    def toggleTEC1cool(self):
+        if self.statusDict['tec1']:
+            commands = [self.device.tec1_off_str]
+        else:
+            commands = [self.device.tec1_on_str]
+            self.TEC1Mode(0)
+        self.device.send_commands(commands, open_port = True)
+
+    def toggleTEC2heat(self):
+        if self.statusDict['tec2']:
+            commands = [self.device.tec2_off_str]
+        else:
+            commands = [self.device.tec2_on_str]
+            self.TEC2Mode(1)
+        self.device.send_commands(commands, open_port = True)
+
+    def toggleTEC2cool(self):
+        if self.statusDict['tec2']:
+            commands = [self.device.tec2_off_str]
+        else:
+            commands = [self.device.tec2_on_str]
+            self.TEC2Mode(0)
         self.device.send_commands(commands, open_port = True)
 
     def toggleTEC2(self):
