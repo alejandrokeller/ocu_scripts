@@ -321,7 +321,7 @@ class Visualizer(object):
             
             ## Prepare tabs
             self.dataTab.tabTEC = QtGui.QWidget()
-            self.dataTab.addTab(self.dataTab.tabTEC,"TEC Control")
+            self.dataTab.addTab(self.dataTab.tabTEC,"TEC")
             self.dataTab.tabTEC.setLayout(self.tecLayout)
             self.infoLayout.addWidget(self.dataTab)
 
@@ -608,7 +608,7 @@ class Visualizer(object):
         self.btnTEC1set.clicked.connect(self.setTEC1)
         self.lblTEC1       = QtGui.QLabel("TEC1 (degC):")
         self.spTEC1        = QtGui.QSpinBox()
-        self.spTEC1.setRange(10,80)
+        self.spTEC1.setRange(0,80)
 
         self.btnTEC2heat   = QtGui.QPushButton("heat")        # Turn TEC1 heat on or off
         self.btnTEC2heat.setFixedWidth(button_size)
