@@ -72,6 +72,22 @@ class instrument(object):
 #            "X?" # Response:"Control DATASTREAM: <ON> = X1000 or <OFF> = X0000 \r\n"
             ]
 
+        self.queries2 = [
+            "B?", # Response: SetPoint BOTTLE[1]=0 BOTTLE[2]=0 [C], SET: Bx000! to Bx999!
+            "g?", # Response: P:TEC[1]=100,240;TEC[2]=100,100; Set:gxYYY!
+            "h?", # Response: i:TEC[1]=10,20;TEC[2]=10,5; Set:hxYYY!
+            "u?", # Response: i2:TEC[1]=1,1; TEC[2]=1,1; Set:uYYY!
+            "v?", # Response: D:TEC[1]=0,0; TEC[2]=0,0; Set:vxYYY!
+            "w?", # Response: LOOP_SPEED: TEC[1]=10; TEC[2]=10; Set:wx001! to wx300!
+            "G?", # Response: Status TEC1=0, TEC2=0, <ON>=Gx1!  <OFF>=Gx0!
+            "H?", # Response: Status TEC1FAN=0, TEC2FAN=0, <ON>=Hx1!  <OFF>=Hx0!
+            "Y?", # Response: TEC1:(1) TEC2:(1)  cool = Yn1! or heat = Yn2!
+            "W?"  # Response: REF_RES PT1=3998, PT2=3994, [Ohms]=Wnxxxx!
+            ]
+
+        if self.model == 2:
+            self.queries.extend(self.queries2)
+
     def serial_ports(self):
         # produce a list of all serial ports. The list contains a tuple with the port number,
         # description and hardware address
@@ -80,7 +96,7 @@ class instrument(object):
 
         # return the port if self.serial_port_description is in the description
         for port in ports:
-            print port[2]
+#            print port[2]
             if self.serial_port_description in port[2]:
                 self.model = 1
                 return port[0]
