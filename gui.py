@@ -805,6 +805,8 @@ class Visualizer(object):
                         txtStatus = txtStatus + "waiting for TEC1"
                         hasStatus = 1
                     if not (self.statusDict['tec2'] == self.tecDict['tec2']):
+                        if hasStatus:
+                            txtStatus = txtStatus + ", "
                         txtStatus = txtStatus + "waiting for TEC2"
                         hasStatus = 1
 
