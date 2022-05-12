@@ -74,11 +74,11 @@ class instrument(object):
 
         self.queries2 = [
             "B?", # Response: SetPoint BOTTLE[1]=0 BOTTLE[2]=0 [C], SET: Bx000! to Bx999!
-            "g?", # Response: P:TEC[1]=100,240;TEC[2]=100,100; Set:gxYYY!
-            "h?", # Response: i:TEC[1]=10,20;TEC[2]=10,5; Set:hxYYY!
-            "u?", # Response: i2:TEC[1]=1,1; TEC[2]=1,1; Set:uYYY!
+            "g?", # Response: P:TEC[1]=300,180;TEC[2]=300,180; Set:gxYYY!
+            "h?", # Response: i:TEC[1]=10,10;TEC[2]=10,10; Set:hxYYY!
+            "u?", # Response: i2:TEC[1]=2,5; TEC[2]=2,5; Set:uYYY!
             "v?", # Response: D:TEC[1]=0,0; TEC[2]=0,0; Set:vxYYY!
-            "w?", # Response: LOOP_SPEED: TEC[1]=10; TEC[2]=10; Set:wx001! to wx300!
+            "w?", # Response: LOOP_SPEED: TEC[1]=20; TEC[2]=20; Set:wx001! to wx300!
             "G?", # Response: Status TEC1=0, TEC2=0, <ON>=Gx1!  <OFF>=Gx0!
             "H?", # Response: Status TEC1FAN=0, TEC2FAN=0, <ON>=Hx1!  <OFF>=Hx0!
             "Y?", # Response: TEC1:(1) TEC2:(1)  cool = Yn1! or heat = Yn2!
