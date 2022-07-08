@@ -92,6 +92,7 @@ class Visualizer(object):
         self.__RHplots()
         self.__Tplots()
         self.__OFRplots()
+        self.__PUMPplots()
         if self.device.model == 2:
             self.__TECplots()
 
@@ -307,6 +308,11 @@ class Visualizer(object):
         self.ofrLayout.addWidget(self.OFRUVplot)
         self.ofrLayout.addWidget(self.OFRTplot)
 
+        self.pumpLayout = QtGui.QVBoxLayout()
+        self.__PUMPwidgets()
+        self.pumpLayout.addLayout(self.pumpControlLayout)
+        self.pumpLayout.addWidget(self.PUMPplot)
+
         ## Prepare tabs and add plots
         self.dataTab = QtGui.QTabWidget()
         ## TabPID for PID and Flow plots
@@ -333,6 +339,10 @@ class Visualizer(object):
         self.dataTab.tabOFR = QtGui.QWidget()
         self.dataTab.addTab(self.dataTab.tabOFR,"OFR")
         self.dataTab.tabOFR.setLayout(self.ofrLayout)
+        ## TabPUMP for PID flow
+        self.dataTab.tabPUMP = QtGui.QWidget()
+        self.dataTab.addTab(self.dataTab.tabPUMP,"PID pump")
+        self.dataTab.tabPUMP.setLayout(self.pumpLayout)
 
         ## Create a QHBox layout to manage the plots
         self.centralLayout = QtGui.QHBoxLayout()
@@ -639,6 +649,47 @@ class Visualizer(object):
         self.tecControlLayout.addWidget(self.spTEC2,       1, 3)
         self.tecControlLayout.addWidget(self.btnTEC2set,   1, 4)
 
+    def __PUMPplots(self):
+        self.PUMPcurves = dict()
+
+        self.PUMPplot = pg.PlotWidget()
+        self.PUMPplot.addLegend()
+        self.PUMPplot.setLabel('left', "PID Flow", units='lpm')
+        self.PUMPplot.setLabel('bottom', "t", units='s')
+        self.PUMPplot.showGrid(False, True)
+        self.PUMPcurves[0] = self.PUMPplot.plot(self.t, self.df['flow1'], pen=pg.mkPen('y', width=1), name='PID1')
+        self.PUMPcurves[1] = self.PUMPplot.plot(self.t, self.df['flow2'], pen=pg.mkPen('r', width=1), name='PID2')
+
+    def __PUMPwidgets(self):
+        ## Create widgets for TEC commands
+        button_size = self.button_size*3 
+        self.btnPUMP1set    = QtGui.QPushButton(">>")          # Sends new PUMP1 setpoint
+        self.btnPUMP1set.setFixedWidth(self.button_size)
+        self.btnPUMP1set.setFixedHeight(self.button_size)
+        self.btnPUMP1set.clicked.connect(self.setPUMP1)
+        self.lblPUMP1       = QtGui.QLabel("PID1 (mlpm):")
+        self.spPUMP1        = QtGui.QSpinBox()
+        self.spPUMP1.setRange(150,500)
+
+        self.btnPUMP2set    = QtGui.QPushButton(">>")          # Sends new PUMP2 setpoint
+        self.btnPUMP2set.setFixedWidth(self.button_size)
+        self.btnPUMP2set.setFixedHeight(self.button_size)
+        self.btnPUMP2set.clicked.connect(self.setPUMP2)
+        self.lblPUMP2       = QtGui.QLabel("PID2 (mlpm):")
+        self.spPUMP2        = QtGui.QSpinBox()
+        self.spPUMP2.setRange(150,500)        
+
+        ## Create a grid layout to manage the TEC controls size and position
+        self.pumpControlLayout = QtGui.QGridLayout()
+
+        self.pumpControlLayout.addWidget(self.lblPUMP1,      0, 0)
+        self.pumpControlLayout.addWidget(self.spPUMP1,       0, 1)
+        self.pumpControlLayout.addWidget(self.btnPUMP1set,   0, 2)
+
+        self.pumpControlLayout.addWidget(self.lblPUMP2,      1, 0)
+        self.pumpControlLayout.addWidget(self.spPUMP2,       1, 1)
+        self.pumpControlLayout.addWidget(self.btnPUMP2set,   1, 2)
+
     def update(self):
 
         try: 
@@ -704,7 +755,8 @@ class Visualizer(object):
                 self.OFRTcurves[0].setData(self.t, self.df['tuv'])
                 # Data is received in mV. Convert using calibration constant
                 self.OFRUVcurves[0].setData(self.t, self.df['iuv']*self.device.uv_constant/1000/1000000)
-
+                self.PUMPcurves[0].setData(self.t, self.df['flow1'])
+                self.PUMPcurves[1].setData(self.t, self.df['flow2'])
 
                 if self.device.model == 2:
                     self.TECcurves[0].setData(self.t, self.df['sb1'])
@@ -729,8 +781,8 @@ class Visualizer(object):
                                                    str(int(newData['iuv']*self.device.uv_constant/1000)), " uA" )))
                 self.lblInletData.setText("".join(("Inlet: ",str(int(newData['inT'])), " degC, ",
                                                    str(int(newData['inrH'])), "% rH" )))
-                self.lblPump1.setText("".join(("Pump1 (", "{:.1f}".format(newData['flow1']), " slpm)")))
-                self.lblPump2.setText("".join(("Pump2 (", "{:.1f}".format(newData['flow2']), " slpm)")))
+                self.lblPump1.setText("".join(("Pump1 (", "{:.2f}".format(newData['flow1']), " slpm)")))
+                self.lblPump2.setText("".join(("Pump2 (", "{:.2f}".format(newData['flow2']), " slpm)")))
                 self.lblVOC1.setText("".join(("VOC1: ",str(int(newData['voc1'])), "/",
                                                str(newData['svoc1']), " mV")))
                 self.lblVOC2.setText("".join(("VOC2: ",str(int(newData['voc2'])), " mV")))
@@ -743,6 +795,8 @@ class Visualizer(object):
                     self.spSVOC1.setValue(int(newData['svoc1']))
                     self.spVOCT.setValue(int(newData['stvoc']))
                     self.spRH.setValue(int(newData['sinrH']))
+                    self.spPUMP1.setValue(int(newData['flow1']*1000))
+                    self.spPUMP2.setValue(int(newData['flow2']*1000))
                     if self.device.model == 2:
                         self.spTEC1.setValue(int(newData['sb1']))
                         self.spTEC2.setValue(int(newData['sb2']))
@@ -902,6 +956,12 @@ class Visualizer(object):
         
     def setRH(self):
         self.device.set_rH(self.spRH.value() ,open_port = True)
+
+    def setPUMP1(self):
+        self.device.set_pump(1, self.spPUMP1.value() ,open_port = True)
+
+    def setPUMP2(self):
+        self.device.set_pump(2, self.spPUMP2.value() ,open_port = True)
             
     def toggleAllLamps(self):
         if self.lamps_status:

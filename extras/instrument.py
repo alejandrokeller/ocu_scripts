@@ -55,6 +55,7 @@ class instrument(object):
         self.tecF2_on_str  = 'H21!'
         
         self.queries = [
+            "N?", # Response: "Serial Number=____"
             "a?", # Response: "p values: P1=x; P2=5; BATH:0; Set: px000 to px999" controls pump and humidification
             "b?", # Response: "i values: P1=x; P2=5; BATH:0; Set: ix000 to ix999" controls pump and humidification
             "C?", # Response: "PID1=[value in mv], PID2=[value in mv], to Control PIDx: <ON> = Cx100 or <OFF> = Cx000"
@@ -62,7 +63,6 @@ class instrument(object):
             "F?", # Response: "SetPoint PUMP1=__ PUMP2=__ [%]"
             "l?", # Response: "Control LAMPS 1 to 5: Lx000 (x= uint8 bitwise 0x00054321)"
             "M?", # Response: "SET MassFlowController 2 = __ [ml], Set:M0000 to M0100"
-            "N?", # Response: "Serial Number=____"
             "p?", # Response: "p val of VOC1 control loop = __ ; Set with: p0000 to p0999"
             "i?", # Response: "i val of VOC1 control loop = __ ; Set with: i0001 to i0999"
             "P?", # Response: "VOC1 SETPOINT=____ [mV]; Set with: P0000 to P2500"
@@ -151,8 +151,8 @@ class instrument(object):
             self.close_port()
 
     def set_pump(self, pump, flow, open_port = False):
-        c = 'L{0}{1:03d}!'.format(pump,flow)
-        if flow >= 0 and flow <= 100 and ( pump == 1 or pump == 2):
+        c = 'F{0}{1:03d}!'.format(pump,flow)
+        if flow >= 0 and flow <= 500 and ( pump == 1 or pump == 2):
             self.send_commands([c], open_port = open_port)
         else:
             self.log_message("SERIAL", "Pump setting invalid: '" + c + "'")
