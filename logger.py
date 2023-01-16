@@ -37,7 +37,8 @@ if os.path.exists(config_file):
     config.read(config_file)
     
     data_path = eval(config['GENERAL_SETTINGS']['DATA_PATH']) + '/'
-    model = eval(config['GENERAL_SETTINGS']['MODEL'])
+# now determined automatically
+#    model = eval(config['GENERAL_SETTINGS']['MODEL'])
     
     server_name = eval(config['TCP_INTERFACE']['HOST_NAME'])
     server_port = eval(config['TCP_INTERFACE']['HOST_PORT'])

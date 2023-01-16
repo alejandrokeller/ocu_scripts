@@ -223,8 +223,9 @@ class Visualizer(object):
         self.encloserLayout.addLayout(self.controlsLayout)
         self.encloserLayout.addLayout(self.lampsButtonsLayout)
         self.encloserLayout.addLayout(self.mfcLayout)
-        if self.lblTECStatus:
-            self.encloserLayout.addWidget(self.lblTECStatus)
+        if self.device.model == 2:
+            if self.lblTECStatus:
+                self.encloserLayout.addWidget(self.lblTECStatus)
         self.encloserLayout.addStretch(1)
 
         ## Create individual lamp buttons
@@ -329,7 +330,7 @@ class Visualizer(object):
             self.dataTab.tabTEC = QtGui.QWidget()
             self.dataTab.addTab(self.dataTab.tabTEC,"TEC")
             self.dataTab.tabTEC.setLayout(self.tecLayout)
-            self.infoLayout.addWidget(self.dataTab)
+        self.infoLayout.addWidget(self.dataTab)
 
         ## TabRH for rH and Temp plots
         self.dataTab.tabRH = QtGui.QWidget()
