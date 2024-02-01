@@ -763,10 +763,14 @@ class Visualizer(object):
                     self.TECcurves[1].setData(self.t, self.df['b1'])
                     self.TECcurves[2].setData(self.t, self.df['sb2'])
                     self.TECcurves[3].setData(self.t, self.df['b2'])
+                    ## 2024.02.02 This was wrongly displaying the tec2 temperature!
+                    #self.TECcurves[3].setData(self.t, self.df['tec2'])
 
                     self.lblTEC1.setText("".join(("TEC1: ", str(int(newData['b1'])), "/",
                                                str(int(newData['sb1'])), " degC")))
                     self.lblTEC2.setText("".join(("TEC2: ", str(int(newData['b2'])), "/",
+                                               str(int(newData['sb2'])), " degC")))
+                    self.lblTEC2.setText("".join(("TEC2: ", str(int(newData['tec2'])), "/",
                                                str(int(newData['sb2'])), " degC")))
                 
 ####################################################################
