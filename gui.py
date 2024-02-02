@@ -770,8 +770,9 @@ class Visualizer(object):
                                                str(int(newData['sb1'])), " degC")))
                     self.lblTEC2.setText("".join(("TEC2: ", str(int(newData['b2'])), "/",
                                                str(int(newData['sb2'])), " degC")))
-                    self.lblTEC2.setText("".join(("TEC2: ", str(int(newData['tec2'])), "/",
-                                               str(int(newData['sb2'])), " degC")))
+                    # 2024.02.02 Wrongly displaying the TEC2 temperature and not the bottle 
+                    #self.lblTEC2.setText("".join(("TEC2: ", str(int(newData['tec2'])), "/",
+                    #                           str(int(newData['sb2'])), " degC")))
                 
 ####################################################################
 
