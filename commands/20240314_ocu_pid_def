@@ -1,0 +1,4 @@
+./send_serial.py a1500! b1100! a2500! b2100! a3200! b3040! 
+./send_serial.py g1200! g2200! h1200! h2200! g3200! g4200! h3100! h4100!
+./send_serial.py v1010! v2010! v3010! v4010!
+  
