@@ -775,12 +775,12 @@ class Visualizer(object):
 
 # Modified to avoid rounding error: A. Keller 14.3.2024
 #                    self.lblTEC1.setText("".join(("TEC1: ", str(int(newData['b1'])), "/",
-                    self.lblTEC1.setText("".join(("TEC1: ", "{:.1f}".format(newData['b1']), "/",
-                                               str(int(newData['sb1'])), " degC")))
+                    self.lblTEC1.setText("  B:{:.1f}, TEC:{:.1f}, SP:{:.0f} degC     ".format(
+                        newData['b1'],newData['tec1'],newData['sb1']))
 # Modified to avoid rounding error: A. Keller 14.3.2024
 #                    self.lblTEC2.setText("".join(("TEC2: ", str(int(newData['b2'])), "/",
-                    self.lblTEC2.setText("".join(("TEC2: ", "{:.1f}".format(newData['b2']), "/",
-                                               str(int(newData['sb2'])), " degC")))
+                    self.lblTEC2.setText("  B:{:.1f}, TEC:{:.1f}, SP:{:.0f} degC     ".format(
+                        newData['b2'],newData['tec2'],newData['sb2']))
                     # 2024.02.02 Wrongly displaying the TEC2 temperature and not the bottle 
                     #self.lblTEC2.setText("".join(("TEC2: ", str(int(newData['tec2'])), "/",
                     #                           str(int(newData['sb2'])), " degC")))
