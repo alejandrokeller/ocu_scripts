@@ -598,10 +598,14 @@ class Visualizer(object):
         self.TECplot.setLabel('left', "TEC Temp", units='degC')
         self.TECplot.setLabel('bottom', "t", units='s')
         self.TECplot.showGrid(False, True)
-        self.TECcurves[0] = self.TECplot.plot(self.t, self.df['sb1'], pen=pg.mkPen('y', width=1, style=QtCore.Qt.DashLine))
-        self.TECcurves[1] = self.TECplot.plot(self.t, self.df['b1'], pen=pg.mkPen('y', width=1), name='TEC1')
-        self.TECcurves[2] = self.TECplot.plot(self.t, self.df['sb2'], pen=pg.mkPen('r', width=1, style=QtCore.Qt.DashLine))
-        self.TECcurves[3] = self.TECplot.plot(self.t, self.df['b2'], pen=pg.mkPen('r', width=1), name='TEC2')
+        self.TECcurves[0] = self.TECplot.plot(self.t, self.df['sb1'], pen=pg.mkPen('y', width=1, style=QtCore.Qt.DotLine), name='SP TEC 1')
+        self.TECcurves[1] = self.TECplot.plot(self.t, self.df['sb2'], pen=pg.mkPen('r', width=1, style=QtCore.Qt.DotLine), name='SP TEC 2')
+        self.TECcurves[2] = self.TECplot.plot(self.t, self.df['tec1'], pen=pg.mkPen('y', width=1, style=QtCore.Qt.DashLine), name='TEC 1')
+        self.TECcurves[3] = self.TECplot.plot(self.t, self.df['tec2'], pen=pg.mkPen('r', width=1, style=QtCore.Qt.DashLine), name='TEC 2')
+        self.TECcurves[4] = self.TECplot.plot(self.t, self.df['b1'], pen=pg.mkPen('y', width=1), name='Bottle 1')
+        self.TECcurves[5] = self.TECplot.plot(self.t, self.df['b2'], pen=pg.mkPen('r', width=1), name='Bottle 2')
+
+
 
     def __TECwidgets(self):
         ## Create widgets for TEC commands
@@ -760,15 +764,21 @@ class Visualizer(object):
 
                 if self.device.model == 2:
                     self.TECcurves[0].setData(self.t, self.df['sb1'])
-                    self.TECcurves[1].setData(self.t, self.df['b1'])
-                    self.TECcurves[2].setData(self.t, self.df['sb2'])
-                    self.TECcurves[3].setData(self.t, self.df['b2'])
+                    self.TECcurves[1].setData(self.t, self.df['sb2'])
+                    self.TECcurves[2].setData(self.t, self.df['tec1'])
+                    self.TECcurves[3].setData(self.t, self.df['tec2'])
+                    self.TECcurves[4].setData(self.t, self.df['b1'])
+                    self.TECcurves[5].setData(self.t, self.df['b2'])
                     ## 2024.02.02 This was wrongly displaying the tec2 temperature!
                     #self.TECcurves[3].setData(self.t, self.df['tec2'])
 
-                    self.lblTEC1.setText("".join(("TEC1: ", str(int(newData['b1'])), "/",
+# Modified to avoid rounding error: A. Keller 14.3.2024
+#                    self.lblTEC1.setText("".join(("TEC1: ", str(int(newData['b1'])), "/",
+                    self.lblTEC1.setText("".join(("TEC1: ", "{:.1f}".format(newData['b1']), "/",
                                                str(int(newData['sb1'])), " degC")))
-                    self.lblTEC2.setText("".join(("TEC2: ", str(int(newData['b2'])), "/",
+# Modified to avoid rounding error: A. Keller 14.3.2024
+#                    self.lblTEC2.setText("".join(("TEC2: ", str(int(newData['b2'])), "/",
+                    self.lblTEC2.setText("".join(("TEC2: ", "{:.1f}".format(newData['b2']), "/",
                                                str(int(newData['sb2'])), " degC")))
                     # 2024.02.02 Wrongly displaying the TEC2 temperature and not the bottle 
                     #self.lblTEC2.setText("".join(("TEC2: ", str(int(newData['tec2'])), "/",
@@ -776,16 +786,24 @@ class Visualizer(object):
                 
 ####################################################################
 
-                self.lblBathrH.setText("".join((str(int(newData['inrH'])), "/",
+#                self.lblBathrH.setText("".join((str(int(newData['inrH'])), "/",
+# Modified to avoid rounding error: A. Keller 14.3.2024
+                self.lblBathrH.setText("".join(("{:.1f}".format(newData['inrH']), "/",
                                                str(newData['sinrH']), " %rH")))
                 self.lblBathT.setText("".join(("Bath T:",
                                                str(newData['tbath']), " degC")))
                 self.lblTubeT.setText("".join(("VOC: ", str(int(newData['tvoc'])), "/",
                                                str(newData['stvoc']), " degC")))
-                self.lblLampsData.setText("".join(("ORF: ",str(int(newData['tuv'])), " degC, ",
+# Modified to avoid rounding error: A. Keller 14.3.2024
+#                self.lblLampsData.setText("".join(("ORF: ",str(int(newData['tuv'])), " degC, ",
+                self.lblLampsData.setText("".join(("ORF: ","{:.1f}".format(newData['tuv']), " degC, ",
                                                    str(int(newData['iuv']*self.device.uv_constant/1000)), " uA" )))
-                self.lblInletData.setText("".join(("Inlet: ",str(int(newData['inT'])), " degC, ",
-                                                   str(int(newData['inrH'])), "% rH" )))
+# Modified to avoid rounding error: A. Keller 14.3.2024
+#                self.lblInletData.setText("".join(("Inlet: ",str(int(newData['inT'])), " degC, ",
+                self.lblInletData.setText("".join(("Inlet: ","{:.1f}".format(newData['inT']), " degC, ",
+# Modified to avoid rounding error: A. Keller 14.3.2024
+#                                                   str(int(newData['inrH'])), "% rH" )))
+                                                   "{:.1f}".format(newData['inrH']), "% rH" )))
                 self.lblPump1.setText("".join(("Pump1 (", "{:.2f}".format(newData['flow1']), " slpm)")))
                 self.lblPump2.setText("".join(("Pump2 (", "{:.2f}".format(newData['flow2']), " slpm)")))
                 self.lblVOC1.setText("".join(("VOC1: ",str(int(newData['voc1'])), "/",
