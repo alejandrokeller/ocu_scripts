@@ -734,20 +734,24 @@ class Visualizer(object):
                     for k, j in zip(self.tecKeys, range(len(self.tecKeys))):
                         self.tecDict[k] = int(statusbyte[j])
 
-                if self.statusDict['voc1']:
-                    self.PIDcurves[0].setData(self.t, self.df['svoc1'])
-                    self.PIDcurves[1].setData(self.t, self.df['voc1'])
-                else:
-                    self.PIDcurves[0].clear()
-                    self.PIDcurves[1].clear()
-
-                if self.statusDict['voc2']:
-                    self.PIDcurves[2].clear()
-                    #self.PIDcurves[2].setData(self.t, self.df['svoc2'])
-                    self.PIDcurves[3].setData(self.t, self.df['voc2'])
-                else:
-                    self.PIDcurves[2].clear()
-                    self.PIDcurves[3].clear()
+                #if self.statusDict['voc1']:
+                #    self.PIDcurves[0].setData(self.t, self.df['svoc1'])
+                #    self.PIDcurves[1].setData(self.t, self.df['voc1'])
+                #else:
+                #    self.PIDcurves[0].clear()
+                #    self.PIDcurves[1].clear()
+                #
+                #if self.statusDict['voc2']:
+                #    self.PIDcurves[2].clear()
+                #    #self.PIDcurves[2].setData(self.t, self.df['svoc2'])
+                #    self.PIDcurves[3].setData(self.t, self.df['voc2'])
+                #else:
+                #    self.PIDcurves[2].clear()
+                #    self.PIDcurves[3].clear()
+                # 2024.03.20 VOC Curves always on. A. Keller
+                self.PIDcurves[0].setData(self.t, self.df['svoc1'])
+                self.PIDcurves[1].setData(self.t, self.df['voc1'])
+                self.PIDcurves[3].setData(self.t, self.df['voc2'])
 
                 # Data is received in mlpm. Dividing through 1000 to use pyqugraph autolabeling
                 self.Fcurves[0].setData(self.t, self.df['mfc1']/1000)
