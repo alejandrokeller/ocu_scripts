@@ -1,0 +1,14 @@
+./tec18.py
+sleep 20m
+./tec10.py
+sleep 20m
+./tec5.py
+sleep 20m
+./tec_off.py
+sleep 10m
+./tec35.py
+sleep 15m
+./tec70.py
+sleep 15m
+./tec_off.py
+  

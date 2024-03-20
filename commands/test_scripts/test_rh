@@ -1,0 +1,8 @@
+./rh70.py
+sleep 15m
+./rh80.py
+sleep 15m
+./rh95.py
+sleep 15m
+./rh_off.py
+  

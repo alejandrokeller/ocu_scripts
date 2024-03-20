@@ -1,0 +1,17 @@
+./voc0.py
+./tec_off.py
+sleep 5m
+./voc100.py
+sleep 15m
+./tvoc200.py
+sleep 15m
+./voc100.py
+sleep 15m
+./voc0.py
+./tec35.py
+sleep 5m
+./voc600.py
+sleep 15m
+./tec_off.py
+./voc0.py
+  
