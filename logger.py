@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import os, sys
 import datetime, time
@@ -119,7 +119,7 @@ while 1:
        time.sleep(5)
        device.open_port()
 
-    if data_string <> "":
+    if data_string != "":
 ##       if use_sense:
 ##          ambient_data = sense.sense_sensor_string()
 ##          sense.increase()
@@ -130,7 +130,7 @@ while 1:
     newdate = datetime.datetime.now()
 
     # Create a new file at midnight
-    if newdate.day <> filedate.day:
+    if newdate.day != filedate.day:
 ##       if use_sense:
 ##           sense.sense.clear(sense.blue)
        fo = open(file, "a")
