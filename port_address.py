@@ -13,4 +13,4 @@ from instrument import instrument
 config_file = base_path + '/config.ini'
 device = instrument(config_file = config_file)
 
-print device.serial_ports()
+print(device.serial_ports())
