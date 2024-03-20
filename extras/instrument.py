@@ -169,7 +169,7 @@ class instrument(object):
         offset = int('01000000',2)
         chr_nr = (lamps ^ offset)
         c = "".join(['L', chr(chr_nr), '000!'])
-        print "sending command: " + c + " chr_nr: " + str(chr_nr)
+        print("sending command: " + c + " chr_nr: " + str(chr_nr), file=sys.stderr)
         if len(c) == 6 and 64 <= chr_nr <= 95:
             self.send_commands([c], open_port = open_port)
         else:
@@ -263,4 +263,4 @@ class instrument(object):
         timestamp = time.strftime("%Y.%m.%d-%H:%M:%S ")
         log_message = "- [{0}] :: {1}"
         log_message = timestamp + log_message.format(module,msg)
-        print >>sys.stderr,log_message
+        print(log_message, file=sys.stderr)
