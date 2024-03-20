@@ -66,12 +66,12 @@ class Visualizer(object):
         # init socket
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # Create a TCP/IP socket
         self.server_address = (host_name, host_port)
-        print >>sys.stderr, 'starting up on %s port %s' % self.server_address
+        print('starting up on {}'.format(self.server_address), file=sys.stderr)
         self.sock.bind(self.server_address) # Bind the socket to the port
         self.sock.listen(1) # Listen for incoming connections
-        print >>sys.stderr, 'waiting for a connection'
+        print('waiting for a connection', file=sys.stderr)
         self.connection, self.client_address = self.sock.accept() # Wait for a connection
-        print >>sys.stderr, 'connection from', self.client_address
+        print('connection from {}'.format(self.client_address), file=sys.stderr)
 
         self.device = instrument(config_file = config_file)
 
@@ -713,7 +713,7 @@ class Visualizer(object):
                     try:
                         newData[k] = f(v)
                     except:
-                        print "could not apply funtion " + str(f) + " to " + str(v)
+                        print("could not apply funtion", str(f),"to",str(v))
 
                 self.df = self.df.append([newData],ignore_index=True)
 
@@ -947,12 +947,12 @@ class Visualizer(object):
                         self.btnTEC2cool.setText("cool")
                                     
         except Exception as e:
-            print >>sys.stderr, e
+            print(e, file=sys.stderr)
 ##            raise
 
     def sendSerialCMD(self):
         commands = [self.lineSERIAL.text().encode("ascii")]
-        print >> sys.stderr, commands
+        print(commands, file=sys.stderr)
         self.device.send_commands(commands, open_port = True)
         self.lineSERIAL.clear()
 
@@ -989,7 +989,7 @@ class Visualizer(object):
             self.device.set_lamps('11111', open_port = True)
 
     def toggleLamp(self, lamp):
-        print "Old Lamp String: " + self.lampString[::-1]
+        print("Old Lamp String: " + self.lampString[::-1])
         ## Reverse the string to change lamps according to GUI
         reverseString = self.lampString[::-1]
         new_value = str(int(reverseString[lamp]) ^ 1)
@@ -997,7 +997,7 @@ class Visualizer(object):
         s[lamp] = new_value
         ## Join and reverse new string for compatibility with firmware
         new_string = ("".join(s))[::-1]
-        print "New lamp String: " + new_string[::-1]
+        print("New lamp String: " + new_string[::-1])
         self.device.set_lamps(new_string, open_port = True)
 
     def toggleVOCHeater(self):
@@ -1107,7 +1107,7 @@ if __name__ == '__main__':
         host_name = eval(config['TCP_INTERFACE']['HOST_NAME'])
         host_port = eval(config['TCP_INTERFACE']['HOST_PORT'])
     else:
-        print >> sys.stderr, "Could not find the configuration file: " + config_file
+        print("Could not find the configuration file: {}".format(config_file), file=sys.stderr)
         exit()
 
 
