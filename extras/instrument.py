@@ -146,7 +146,7 @@ class instrument(object):
                 # terminate it as action with a char '!' if needed
                 c += '!'
 #            self.log_message("SERIAL", "Sending command: '" + c + "'")
-            self.ser.write(c)
+            self.ser.write(c.encode())
         if open_port:
             self.close_port()
 
@@ -245,7 +245,7 @@ class instrument(object):
         answer = ""
         wait_until = datetime.datetime.now() + timedelta(seconds=self.query_timeout)
         while not answer.endswith("\n"):
-            answer=self.ser.readline()
+            answer=self.ser.readline().decode()
             if wait_until < datetime.datetime.now():
                 answer+="timeout while waiting for responde to query " + query + "\n"
                 break

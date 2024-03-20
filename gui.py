@@ -5,7 +5,7 @@
 # provides also a buttons interface for interacting with the 
 # measurement instrument
 
-from pyqtgraph.Qt import QtGui, QtCore
+from pyqtgraph.Qt import QtGui, QtCore, QtWidgets
 import pyqtgraph as pg
 import socket
 import sys, os
@@ -76,7 +76,7 @@ class Visualizer(object):
         self.device = instrument(config_file = config_file)
 
         # init pyqt
-        self.app = QtGui.QApplication([])
+        self.app = QtWidgets.QApplication([])
         pg.setConfigOptions(antialias=False)
         pg.setConfigOption('foreground', 'w')
 
