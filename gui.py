@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # listens to a TCP broadcast and displays data using Ppyqt widgets
@@ -99,49 +99,49 @@ class Visualizer(object):
 #####################################################################
 
         ## Define a top level widget to hold the controls
-        self.widgets = QtGui.QWidget()
+        self.widgets = QtWidgets.QWidget()
         self.widgets.setWindowTitle("OCU: Organics Coating Unit")
         self.widgets.showFullScreen()
 
         ## Create infotext widgets to be placed inside
-        self.lblLamp      = QtGui.QLabel("Lamps")
-        self.lblVOCTctr   = QtGui.QLabel("VOC heater")
-        self.lblBath      = QtGui.QLabel("rH:")
-        self.lblBathrH    = QtGui.QLabel("")
-        self.lblTubeT     = QtGui.QLabel("VOC: XX degC")
-        self.lblVOC1      = QtGui.QLabel("VOC1 ()")
-        self.lblVOC2      = QtGui.QLabel("VOC2 ()")
-        self.lblPump1     = QtGui.QLabel("Pump1")
-        self.lblPump2     = QtGui.QLabel("Pump2")
-        self.lblLampsData = QtGui.QLabel("ORF: XX degC, XXXX uA")
-        self.lblInletData = QtGui.QLabel("Inlet: XX degC, XX% rH")
+        self.lblLamp      = QtWidgets.QLabel("Lamps")
+        self.lblVOCTctr   = QtWidgets.QLabel("VOC heater")
+        self.lblBath      = QtWidgets.QLabel("rH:")
+        self.lblBathrH    = QtWidgets.QLabel("")
+        self.lblTubeT     = QtWidgets.QLabel("VOC: XX degC")
+        self.lblVOC1      = QtWidgets.QLabel("VOC1 ()")
+        self.lblVOC2      = QtWidgets.QLabel("VOC2 ()")
+        self.lblPump1     = QtWidgets.QLabel("Pump1")
+        self.lblPump2     = QtWidgets.QLabel("Pump2")
+        self.lblLampsData = QtWidgets.QLabel("ORF: XX degC, XXXX uA")
+        self.lblInletData = QtWidgets.QLabel("Inlet: XX degC, XX% rH")
         
-        self.lblCD        = QtGui.QLabel("0")
+        self.lblCD        = QtWidgets.QLabel("0")
 
         ## Create button widgets for actions
         self.button_size  = 27
-        self.btnLamp      = QtGui.QPushButton("")            # Turn lamps on or off
+        self.btnLamp      = QtWidgets.QPushButton("")            # Turn lamps on or off
         self.btnLamp.setFixedWidth(self.button_size)
         self.btnLamp.setFixedHeight(self.button_size)
-        self.btnVOCTctr   = QtGui.QPushButton("")            # Turn VOC heater on or off
+        self.btnVOCTctr   = QtWidgets.QPushButton("")            # Turn VOC heater on or off
         self.btnVOCTctr.setFixedHeight(self.button_size)
         self.btnVOCTctr.setFixedWidth(self.button_size)
-        self.btnBath      = QtGui.QPushButton("")            # Turn rH control on/off
+        self.btnBath      = QtWidgets.QPushButton("")            # Turn rH control on/off
         self.btnBath.setFixedWidth(self.button_size)
         self.btnBath.setFixedHeight(self.button_size)
-        self.btnTube      = QtGui.QPushButton("")             # Turn Tube Heating on/off
+        self.btnTube      = QtWidgets.QPushButton("")             # Turn Tube Heating on/off
         self.btnTube.setFixedWidth(self.button_size)
         self.btnTube.setFixedHeight(self.button_size)
-        self.btnVOC1      = QtGui.QPushButton("")             # TURN VOC1 control on/off
+        self.btnVOC1      = QtWidgets.QPushButton("")             # TURN VOC1 control on/off
         self.btnVOC1.setFixedWidth(self.button_size)
         self.btnVOC1.setFixedHeight(self.button_size)
-        self.btnVOC2      = QtGui.QPushButton("")            # TURN VOC2 control on/off
+        self.btnVOC2      = QtWidgets.QPushButton("")            # TURN VOC2 control on/off
         self.btnVOC2.setFixedWidth(self.button_size)
         self.btnVOC2.setFixedHeight(self.button_size)
-        self.btnPump1     = QtGui.QPushButton("")            # Turn pump 1 on/off
+        self.btnPump1     = QtWidgets.QPushButton("")            # Turn pump 1 on/off
         self.btnPump1.setFixedWidth(self.button_size)
         self.btnPump1.setFixedHeight(self.button_size)
-        self.btnPump2     = QtGui.QPushButton("")            # Turn pump 2 on/off
+        self.btnPump2     = QtWidgets.QPushButton("")            # Turn pump 2 on/off
         self.btnPump2.setFixedWidth(self.button_size)
         self.btnPump2.setFixedHeight(self.button_size)
 
@@ -154,72 +154,72 @@ class Visualizer(object):
         self.btnBath.clicked.connect(self.togglerH)
 
         ## Create widgets for controlling MFC2
-        self.btnMFC2      = QtGui.QPushButton(">>")  # Sends new MFC2 flow
+        self.btnMFC2      = QtWidgets.QPushButton(">>")  # Sends new MFC2 flow
         self.btnMFC2.setFixedWidth(self.button_size)
         self.btnMFC2.setFixedHeight(self.button_size)
         self.btnMFC2.clicked.connect(self.setMFC2)
-        self.lblMFC2      = QtGui.QLabel("MFC2 (mlpm):")
-        self.spMFC2       = QtGui.QSpinBox()
+        self.lblMFC2      = QtWidgets.QLabel("MFC2 (mlpm):")
+        self.spMFC2       = QtWidgets.QSpinBox()
         self.spMFC2.setRange(0,100)
 
         ## Create widgets for controlling VOC1
-        self.btnSVOC1      = QtGui.QPushButton(">>")  # Sends new MFC2 flow
+        self.btnSVOC1      = QtWidgets.QPushButton(">>")  # Sends new MFC2 flow
         self.btnSVOC1.setFixedWidth(self.button_size)
         self.btnSVOC1.setFixedHeight(self.button_size)
         self.btnSVOC1.clicked.connect(self.setSVOC1)
-        self.lblSVOC1      = QtGui.QLabel("VOC1 (mV):")
-        self.spSVOC1       = QtGui.QSpinBox()
+        self.lblSVOC1      = QtWidgets.QLabel("VOC1 (mV):")
+        self.spSVOC1       = QtWidgets.QSpinBox()
         self.spSVOC1.setRange(0,2500)
 
         ## Create widgets for controlling VOC Heater
-        self.btnVOCT       = QtGui.QPushButton(">>")  # Sends new MFC2 flow
+        self.btnVOCT       = QtWidgets.QPushButton(">>")  # Sends new MFC2 flow
         self.btnVOCT.setFixedWidth(self.button_size)
         self.btnVOCT.setFixedHeight(self.button_size)
         self.btnVOCT.clicked.connect(self.setVOCT)
-        self.lblVOCT       = QtGui.QLabel("VOC (degC):")
-        self.spVOCT        = QtGui.QSpinBox()
+        self.lblVOCT       = QtWidgets.QLabel("VOC (degC):")
+        self.spVOCT        = QtWidgets.QSpinBox()
         self.spVOCT.setRange(0,80)
         
         ## Create widgets for controlling rH
-        self.btnRH         = QtGui.QPushButton(">>")  # Sends new MFC2 flow
+        self.btnRH         = QtWidgets.QPushButton(">>")  # Sends new MFC2 flow
         self.btnRH.setFixedWidth(self.button_size)
         self.btnRH.setFixedHeight(self.button_size)
         self.btnRH.clicked.connect(self.setRH)
-        self.lblRH       = QtGui.QLabel("rH (%):")
-        self.spRH        = QtGui.QSpinBox()
+        self.lblRH       = QtWidgets.QLabel("rH (%):")
+        self.spRH        = QtWidgets.QSpinBox()
         self.spRH.setRange(0,95)
-        self.lblBathT    = QtGui.QLabel("Bath (degC):") # tbath container
+        self.lblBathT    = QtWidgets.QLabel("Bath (degC):") # tbath container
 
         ## Create widgets for serial commands
-        self.btnSERIAL     = QtGui.QPushButton(">>")  # Sends new MFC2 flow
+        self.btnSERIAL     = QtWidgets.QPushButton(">>")  # Sends new MFC2 flow
         self.btnSERIAL.setFixedWidth(self.button_size)
         self.btnSERIAL.setFixedHeight(self.button_size)
         self.btnSERIAL.clicked.connect(self.sendSerialCMD)
-        self.lblSERIAL     = QtGui.QLabel("Command:")
-        self.lineSERIAL    = QtGui.QLineEdit()
-        validator = QtGui.QRegExpValidator(QtCore.QRegExp("[abFpirRXzZ][0-9]{4}"))
-        if self.device.model == 2:
-            validator = QtGui.QRegExpValidator(QtCore.QRegExp("[abFgHhuDpirRXzZ][0-9]{4}"))
-        self.lineSERIAL.setValidator(validator)
+        self.lblSERIAL     = QtWidgets.QLabel("Command:")
+        self.lineSERIAL    = QtWidgets.QLineEdit()
+        #validator = QtGui.QRegExpValidator(QtCore.QRegExp("[abFpirRXzZ][0-9]{4}"))
+        #if self.device.model == 2:
+        #    validator = QtGui.QRegExpValidator(QtCore.QRegExp("[abFgHhuDpirRXzZ][0-9]{4}"))
+        #self.lineSERIAL.setValidator(validator)
 
         ## Create widgets for TEC commands
         if self.device.model == 2:
             self.__TECwidgets()
 
             ## Info of current TEC Modes and temperatures
-            self.lblTEC1mode   = QtGui.QLabel("TEC1 (mode)")
-            self.lblTEC2mode   = QtGui.QLabel("TEC2 (mode)")
+            self.lblTEC1mode   = QtWidgets.QLabel("TEC1 (mode)")
+            self.lblTEC2mode   = QtWidgets.QLabel("TEC2 (mode)")
 
             ## Temporary label with TEC Status
-            self.lblTECStatus   = QtGui.QLabel("TEC Status: - STATUS TEXT -")
+            self.lblTECStatus   = QtWidgets.QLabel("TEC Status: - STATUS TEXT -")
             self.lblTECStatus.setWordWrap(True)
             
 
         ## Create a grid layout to manage the controls size and position
-        self.controlsLayout = QtGui.QGridLayout()
-        self.encloserLayout = QtGui.QVBoxLayout()
-        self.lampsButtonsLayout = QtGui.QHBoxLayout()
-        self.mfcLayout = QtGui.QGridLayout()
+        self.controlsLayout = QtWidgets.QGridLayout()
+        self.encloserLayout = QtWidgets.QVBoxLayout()
+        self.lampsButtonsLayout = QtWidgets.QHBoxLayout()
+        self.mfcLayout = QtWidgets.QGridLayout()
         self.encloserLayout.addLayout(self.controlsLayout)
         self.encloserLayout.addLayout(self.lampsButtonsLayout)
         self.encloserLayout.addLayout(self.mfcLayout)
@@ -232,8 +232,8 @@ class Visualizer(object):
         self.lamps = []
         for i in range(5):
             self.lamps.append(i)
-            self.lamps[i] = QtGui.QPushButton("L{}".format(i))
-            self.lamps[i].setFixedWidth(1.2*self.button_size)
+            self.lamps[i] = QtWidgets.QPushButton("L{}".format(i))
+            self.lamps[i].setFixedWidth(int(1.2*self.button_size))
             self.lamps[i].setFixedHeight(self.button_size)
             self.lamps[i].clicked.connect(partial(self.toggleLamp,i))
             self.lampsButtonsLayout.addWidget(self.lamps[i])
@@ -279,14 +279,14 @@ class Visualizer(object):
         self.mfcLayout.addWidget(self.btnSERIAL,   4, 2)
         
         ## Create a QVBox layout to manage the Info and plots
-        self.infoLayout = QtGui.QVBoxLayout()
+        self.infoLayout = QtWidgets.QVBoxLayout()
 
         ## Create a QHBox for the text info
-        self.textLayout = QtGui.QHBoxLayout()
+        self.textLayout = QtWidgets.QHBoxLayout()
         self.textLayout.addWidget(self.lblLampsData)
-        self.textLayout.addItem(QtGui.QSpacerItem(30, 0))
+        self.textLayout.addItem(QtWidgets.QSpacerItem(30, 0))
         self.textLayout.addWidget(self.lblInletData)
-        self.textLayout.addItem(QtGui.QSpacerItem(30, 0))
+        self.textLayout.addItem(QtWidgets.QSpacerItem(30, 0))
         if self.device.model == 1:
             self.textLayout.addWidget(self.lblTubeT)
         elif self.device.model == 2:
@@ -297,56 +297,56 @@ class Visualizer(object):
         self.infoLayout.addLayout(self.textLayout)
         
         ## Now the plots
-        self.pidLayout = QtGui.QVBoxLayout()
+        self.pidLayout = QtWidgets.QVBoxLayout()
         self.pidLayout.addWidget(self.PIDplot)
         self.pidLayout.addWidget(self.Fplot)
 
-        self.rhLayout = QtGui.QVBoxLayout()
+        self.rhLayout = QtWidgets.QVBoxLayout()
         self.rhLayout.addWidget(self.RHplot)
         self.rhLayout.addWidget(self.Tplot)
 
-        self.ofrLayout = QtGui.QVBoxLayout()
+        self.ofrLayout = QtWidgets.QVBoxLayout()
         self.ofrLayout.addWidget(self.OFRUVplot)
         self.ofrLayout.addWidget(self.OFRTplot)
 
-        self.pumpLayout = QtGui.QVBoxLayout()
+        self.pumpLayout = QtWidgets.QVBoxLayout()
         self.__PUMPwidgets()
         self.pumpLayout.addLayout(self.pumpControlLayout)
         self.pumpLayout.addWidget(self.PUMPplot)
 
         ## Prepare tabs and add plots
-        self.dataTab = QtGui.QTabWidget()
+        self.dataTab = QtWidgets.QTabWidget()
         ## TabPID for PID and Flow plots
-        self.dataTab.tabPID = QtGui.QWidget()
+        self.dataTab.tabPID = QtWidgets.QWidget()
         self.dataTab.addTab(self.dataTab.tabPID,"VOC / Flow")
         self.dataTab.tabPID.setLayout(self.pidLayout)
 
         if self.device.model == 2:
-            self.tecLayout = QtGui.QVBoxLayout()
+            self.tecLayout = QtWidgets.QVBoxLayout()
             self.tecLayout.addLayout(self.tecControlLayout)
             self.tecLayout.addWidget(self.TECplot)
             
             ## Prepare tabs
-            self.dataTab.tabTEC = QtGui.QWidget()
+            self.dataTab.tabTEC = QtWidgets.QWidget()
             self.dataTab.addTab(self.dataTab.tabTEC,"TEC")
             self.dataTab.tabTEC.setLayout(self.tecLayout)
         self.infoLayout.addWidget(self.dataTab)
 
         ## TabRH for rH and Temp plots
-        self.dataTab.tabRH = QtGui.QWidget()
+        self.dataTab.tabRH = QtWidgets.QWidget()
         self.dataTab.addTab(self.dataTab.tabRH,"rH / Temp")
         self.dataTab.tabRH.setLayout(self.rhLayout)
         ## TabOFR for OFR plots
-        self.dataTab.tabOFR = QtGui.QWidget()
+        self.dataTab.tabOFR = QtWidgets.QWidget()
         self.dataTab.addTab(self.dataTab.tabOFR,"OFR")
         self.dataTab.tabOFR.setLayout(self.ofrLayout)
         ## TabPUMP for PID flow
-        self.dataTab.tabPUMP = QtGui.QWidget()
+        self.dataTab.tabPUMP = QtWidgets.QWidget()
         self.dataTab.addTab(self.dataTab.tabPUMP,"PID pump")
         self.dataTab.tabPUMP.setLayout(self.pumpLayout)
 
         ## Create a QHBox layout to manage the plots
-        self.centralLayout = QtGui.QHBoxLayout()
+        self.centralLayout = QtWidgets.QHBoxLayout()
 
         self.centralLayout.addLayout(self.encloserLayout)
         self.centralLayout.addLayout(self.infoLayout)
@@ -399,10 +399,10 @@ class Visualizer(object):
             ]
         self.functions = [
             float,  # runtime
-            int,    # svoc1
+            float,    # svoc1
             float,  # voc1
             float,  # base1
-            int,    # svoc2
+            float,    # svoc2
             float,  # voc2
             float,  # base2
             float,  # mfc1
@@ -413,9 +413,9 @@ class Visualizer(object):
             float,  # iuv
             float,  # inrH
             float,  # inT
-            int,     # stvoc
+            float,     # stvoc
             float,   # tvoc
-            int,     # sinrH
+            float,     # sinrH
             float,   # tbath
             hex2bin, # status
             hex2bin  # lamps
@@ -473,7 +473,7 @@ class Visualizer(object):
         zeroDict = dict(zip(self.keys,
                        map(partial(apply, a="0"), self.functions)
                        ))
-        self.df = self.df.append([zeroDict]*self.numSamples,ignore_index=True)
+        self.df = pd.concat([self.df, pd.DataFrame([zeroDict]*self.numSamples)],ignore_index=True)
             
         self.statusKeys = [
             "tec2",
@@ -536,9 +536,9 @@ class Visualizer(object):
         self.PIDplot.setLabel('left', "PID voltage", units='mV')
         self.PIDplot.setLabel('bottom', "t", units='s')
         self.PIDplot.showGrid(False, True)
-        self.PIDcurves[0] = self.PIDplot.plot(self.t, self.df['svoc1'], pen=pg.mkPen('y', width=1, style=QtCore.Qt.DashLine))
+        self.PIDcurves[0] = self.PIDplot.plot(self.t, self.df['svoc1'], pen=pg.mkPen('y', width=1)) #, style=QtCore.Qt.DashLine))
         self.PIDcurves[1] = self.PIDplot.plot(self.t, self.df['voc1'], pen=pg.mkPen('y', width=1), name='PID1')
-        self.PIDcurves[2] = self.PIDplot.plot(self.t, self.df['svoc2'], pen=pg.mkPen('r', width=1, style=QtCore.Qt.DashLine))
+        self.PIDcurves[2] = self.PIDplot.plot(self.t, self.df['svoc2'], pen=pg.mkPen('r', width=1)) #, style=QtCore.Qt.DashLine))
         self.PIDcurves[3] = self.PIDplot.plot(self.t, self.df['voc2'], pen=pg.mkPen('r', width=1), name='PID2')
         
     def __Fplots(self):
@@ -561,7 +561,7 @@ class Visualizer(object):
         self.RHplot.setLabel('left', "Inlet rH", units='%')
         self.RHplot.setLabel('bottom', "t", units='s')
         self.RHplot.showGrid(False, True)
-        self.RHcurves[0] = self.RHplot.plot(self.t, self.df['sinrH'], pen=pg.mkPen('y', width=1, style=QtCore.Qt.DashLine))
+        self.RHcurves[0] = self.RHplot.plot(self.t, self.df['sinrH'], pen=pg.mkPen('y', width=1)) #, style=QtCore.Qt.DashLine))
         self.RHcurves[1] = self.RHplot.plot(self.t, self.df['inrH'], pen=pg.mkPen('y', width=1))
 
     def __Tplots(self):
@@ -599,10 +599,10 @@ class Visualizer(object):
         self.TECplot.setLabel('left', "TEC Temp", units='degC')
         self.TECplot.setLabel('bottom', "t", units='s')
         self.TECplot.showGrid(False, True)
-        self.TECcurves[0] = self.TECplot.plot(self.t, self.df['sb1'], pen=pg.mkPen('y', width=1, style=QtCore.Qt.DotLine), name='SP TEC 1')
-        self.TECcurves[1] = self.TECplot.plot(self.t, self.df['sb2'], pen=pg.mkPen('r', width=1, style=QtCore.Qt.DotLine), name='SP TEC 2')
-        self.TECcurves[2] = self.TECplot.plot(self.t, self.df['tec1'], pen=pg.mkPen('y', width=1, style=QtCore.Qt.DashLine), name='TEC 1')
-        self.TECcurves[3] = self.TECplot.plot(self.t, self.df['tec2'], pen=pg.mkPen('r', width=1, style=QtCore.Qt.DashLine), name='TEC 2')
+        self.TECcurves[0] = self.TECplot.plot(self.t, self.df['sb1'], name='SP TEC 1', pen=pg.mkPen('y', width=1)) #, style=QtCore.Qt.DotLine))
+        self.TECcurves[1] = self.TECplot.plot(self.t, self.df['sb2'], name='SP TEC 2', pen=pg.mkPen('r', width=1)) #, style=QtCore.Qt.DotLine))
+        self.TECcurves[2] = self.TECplot.plot(self.t, self.df['tec1'], name='TEC 1', pen=pg.mkPen('y', width=1)) #, style=QtCore.Qt.DashLine))
+        self.TECcurves[3] = self.TECplot.plot(self.t, self.df['tec2'], name='TEC 2', pen=pg.mkPen('r', width=1)) #, style=QtCore.Qt.DashLine))
         self.TECcurves[4] = self.TECplot.plot(self.t, self.df['b1'], pen=pg.mkPen('y', width=1), name='Bottle 1')
         self.TECcurves[5] = self.TECplot.plot(self.t, self.df['b2'], pen=pg.mkPen('r', width=1), name='Bottle 2')
 
@@ -611,36 +611,36 @@ class Visualizer(object):
     def __TECwidgets(self):
         ## Create widgets for TEC commands
         button_size = self.button_size*3 
-        self.btnTEC1heat   = QtGui.QPushButton("heat")        # Turn TEC1 heat on or off
+        self.btnTEC1heat   = QtWidgets.QPushButton("heat")        # Turn TEC1 heat on or off
         self.btnTEC1heat.setFixedWidth(button_size)
         self.btnTEC1heat.clicked.connect(self.toggleTEC1heat)
-        self.btnTEC1cool   = QtGui.QPushButton("cool")        # Turn TEC1 cool on or off
+        self.btnTEC1cool   = QtWidgets.QPushButton("cool")        # Turn TEC1 cool on or off
         self.btnTEC1cool.setFixedWidth(button_size)
         self.btnTEC1cool.clicked.connect(self.toggleTEC1cool)
-        self.btnTEC1set    = QtGui.QPushButton(">>")          # Sends new TEC1 setpoint
+        self.btnTEC1set    = QtWidgets.QPushButton(">>")          # Sends new TEC1 setpoint
         self.btnTEC1set.setFixedWidth(self.button_size)
         self.btnTEC1set.setFixedHeight(self.button_size)
         self.btnTEC1set.clicked.connect(self.setTEC1)
-        self.lblTEC1       = QtGui.QLabel("TEC1 (degC):")
-        self.spTEC1        = QtGui.QSpinBox()
+        self.lblTEC1       = QtWidgets.QLabel("TEC1 (degC):")
+        self.spTEC1        = QtWidgets.QSpinBox()
         self.spTEC1.setRange(0,80)
 
-        self.btnTEC2heat   = QtGui.QPushButton("heat")        # Turn TEC1 heat on or off
+        self.btnTEC2heat   = QtWidgets.QPushButton("heat")        # Turn TEC1 heat on or off
         self.btnTEC2heat.setFixedWidth(button_size)
         self.btnTEC2heat.clicked.connect(self.toggleTEC2heat)
-        self.btnTEC2cool   = QtGui.QPushButton("cool")        # Turn TEC1 cool on or off
+        self.btnTEC2cool   = QtWidgets.QPushButton("cool")        # Turn TEC1 cool on or off
         self.btnTEC2cool.setFixedWidth(button_size)
         self.btnTEC2cool.clicked.connect(self.toggleTEC2cool)
-        self.btnTEC2set    = QtGui.QPushButton(">>")         # Sends new TEC2 setpoint
+        self.btnTEC2set    = QtWidgets.QPushButton(">>")         # Sends new TEC2 setpoint
         self.btnTEC2set.setFixedWidth(self.button_size)
         self.btnTEC2set.setFixedHeight(self.button_size)
         self.btnTEC2set.clicked.connect(self.setTEC2)
-        self.lblTEC2       = QtGui.QLabel("TEC2 (degC):")
-        self.spTEC2        = QtGui.QSpinBox()
+        self.lblTEC2       = QtWidgets.QLabel("TEC2 (degC):")
+        self.spTEC2        = QtWidgets.QSpinBox()
         self.spTEC2.setRange(0,80)
 
         ## Create a grid layout to manage the TEC controls size and position
-        self.tecControlLayout = QtGui.QGridLayout()
+        self.tecControlLayout = QtWidgets.QGridLayout()
 
         self.tecControlLayout.addWidget(self.btnTEC1heat,  0, 0)
         self.tecControlLayout.addWidget(self.btnTEC1cool,  0, 1)
@@ -668,24 +668,24 @@ class Visualizer(object):
     def __PUMPwidgets(self):
         ## Create widgets for TEC commands
         button_size = self.button_size*3 
-        self.btnPUMP1set    = QtGui.QPushButton(">>")          # Sends new PUMP1 setpoint
+        self.btnPUMP1set    = QtWidgets.QPushButton(">>")          # Sends new PUMP1 setpoint
         self.btnPUMP1set.setFixedWidth(self.button_size)
         self.btnPUMP1set.setFixedHeight(self.button_size)
         self.btnPUMP1set.clicked.connect(self.setPUMP1)
-        self.lblPUMP1       = QtGui.QLabel("PID1 (mlpm):")
-        self.spPUMP1        = QtGui.QSpinBox()
+        self.lblPUMP1       = QtWidgets.QLabel("PID1 (mlpm):")
+        self.spPUMP1        = QtWidgets.QSpinBox()
         self.spPUMP1.setRange(150,500)
 
-        self.btnPUMP2set    = QtGui.QPushButton(">>")          # Sends new PUMP2 setpoint
+        self.btnPUMP2set    = QtWidgets.QPushButton(">>")          # Sends new PUMP2 setpoint
         self.btnPUMP2set.setFixedWidth(self.button_size)
         self.btnPUMP2set.setFixedHeight(self.button_size)
         self.btnPUMP2set.clicked.connect(self.setPUMP2)
-        self.lblPUMP2       = QtGui.QLabel("PID2 (mlpm):")
-        self.spPUMP2        = QtGui.QSpinBox()
+        self.lblPUMP2       = QtWidgets.QLabel("PID2 (mlpm):")
+        self.spPUMP2        = QtWidgets.QSpinBox()
         self.spPUMP2.setRange(150,500)        
 
         ## Create a grid layout to manage the TEC controls size and position
-        self.pumpControlLayout = QtGui.QGridLayout()
+        self.pumpControlLayout = QtWidgets.QGridLayout()
 
         self.pumpControlLayout.addWidget(self.lblPUMP1,      0, 0)
         self.pumpControlLayout.addWidget(self.spPUMP1,       0, 1)
@@ -698,7 +698,8 @@ class Visualizer(object):
     def update(self):
 
         try: 
-            self.datastring = self.connection.recv(1024)
+            self.datastring = self.connection.recv(1024).decode('UTF-8')
+            #print(self.datastring)
 
             if self.datastring:
                 ####### syntax changed for the status byte... ignore
@@ -712,10 +713,11 @@ class Visualizer(object):
                 for k, f, v in zip(self.keys, self.functions, values):
                     try:
                         newData[k] = f(v)
+                        #print("{}: Apply funtion {} to {} type={}".format(k, f, v, type(newData[k])))
                     except:
                         print("could not apply funtion", str(f),"to",str(v))
 
-                self.df = self.df.append([newData],ignore_index=True)
+                self.df = pd.concat([self.df,pd.DataFrame([newData])],ignore_index=True)
 
                 statusbyte = newData['status']
                 for k, j in zip(self.statusKeys, range(len(self.statusKeys))):
@@ -728,7 +730,7 @@ class Visualizer(object):
                     if j > 2:
                         ## LampString has the most significant bit to the left
                         self.lampString = self.lampString + statusbyte[j]
-
+                
                 if self.device.model == 2:
                     statusbyte = newData['tecbyte']
                     for k, j in zip(self.tecKeys, range(len(self.tecKeys))):
@@ -749,6 +751,7 @@ class Visualizer(object):
                 #    self.PIDcurves[2].clear()
                 #    self.PIDcurves[3].clear()
                 # 2024.03.20 VOC Curves always on. A. Keller
+                self.PIDcurves[2].clear()
                 self.PIDcurves[0].setData(self.t, self.df['svoc1'])
                 self.PIDcurves[1].setData(self.t, self.df['voc1'])
                 self.PIDcurves[3].setData(self.t, self.df['voc2'])
@@ -766,7 +769,7 @@ class Visualizer(object):
                 self.OFRUVcurves[0].setData(self.t, self.df['iuv']*self.device.uv_constant/1000/1000000)
                 self.PUMPcurves[0].setData(self.t, self.df['flow1'])
                 self.PUMPcurves[1].setData(self.t, self.df['flow2'])
-
+                
                 if self.device.model == 2:
                     self.TECcurves[0].setData(self.t, self.df['sb1'])
                     self.TECcurves[1].setData(self.t, self.df['sb2'])
@@ -1119,7 +1122,7 @@ if __name__ == '__main__':
 
     timer = QtCore.QTimer()
     timer.timeout.connect(vis.update)
-    timer.start(vis.deltaT*1000)
+    timer.start(int(vis.deltaT*1000))
 
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
-        QtGui.QApplication.instance().exec_()
+        QtWidgets.QApplication.instance().exec()

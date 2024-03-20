@@ -123,7 +123,7 @@ while 1:
 ##       if use_sense:
 ##          ambient_data = sense.sense_sensor_string()
 ##          sense.increase()
-       x+=daytime + '\t' + data_string.decode()
+       x+=daytime + '\t' + data_string.decode('UTF-8')
        # transmit TCP data
        sock = send_string(data_string, server_address, sock)
     counter+=1;
@@ -149,3 +149,4 @@ while 1:
        fo.close()
        x=''
        counter=0
+

@@ -245,7 +245,7 @@ class instrument(object):
         answer = ""
         wait_until = datetime.datetime.now() + timedelta(seconds=self.query_timeout)
         while not answer.endswith("\n"):
-            answer=self.ser.readline().decode()
+            answer=self.ser.readline().decode('UTF-8')
             if wait_until < datetime.datetime.now():
                 answer+="timeout while waiting for responde to query " + query + "\n"
                 break
