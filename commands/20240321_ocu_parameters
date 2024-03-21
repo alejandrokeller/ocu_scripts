@@ -1,0 +1,17 @@
+echo "Setting VOC1 PI"
+./send_serial.py p0100! i0025!
+echo "Setting PUMP1 PI"
+./send_serial.py a1500! b1100! 
+echo "Setting PUMP2 PI"
+./send_serial.py a2500! b2100! 
+echo "Setting rH Bath PI"
+./send_serial.py a3200! b3040! 
+echo "Setting TEC1 PID Cooling"
+./send_serial.py g1200! h1200! v1010!
+echo "Setting TEC2 PID Cooling"
+./send_serial.py g2200! h2200! v2010!
+echo "Setting TEC1 PID Heating"
+./send_serial.py g3200! h3100! v3010!
+echo "Setting TEC2 PID Heating"
+./send_serial.py g4200! h4100! v4010!
+  
