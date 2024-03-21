@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Name=OCU-GUI
+Exec=/logger/gui.py &
+StartupNotify=false
