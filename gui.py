@@ -844,9 +844,11 @@ class Visualizer(object):
 
                 for status, btn in zip(self.lampString[::-1], self.lamps):
                     if int(status) > 0:
-                        btn.setStyleSheet("background-color: green")
+                        #btn.setStyleSheet("background-color: green")
+                        btn.setStyleSheet("color: green")
                     else:
-                        btn.setStyleSheet("background-color: red")
+                        #btn.setStyleSheet("background-color: red")
+                        btn.setStyleSheet("color: red")
 
                 if self.statusDict['voc1']:
                     self.lblVOC1.setStyleSheet('color: green')
