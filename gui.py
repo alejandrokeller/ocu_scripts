@@ -5,7 +5,8 @@
 # provides also a buttons interface for interacting with the 
 # measurement instrument
 
-from pyqtgraph.Qt import QtGui, QtCore, QtWidgets
+#from pyqtgraph.Qt import QtGui, QtCore, QtWidgets
+from PyQt5 import  QtGui, QtCore, QtWidgets
 import pyqtgraph as pg
 import socket
 import sys, os
@@ -86,6 +87,16 @@ class Visualizer(object):
         # setup plots
         self.pen = pg.mkPen('y', width=1)
         self.t = np.linspace(-self.graphLength, 0, self.numSamples)
+        self.pen1  = pen=pg.mkPen('y', width=1)
+        self.pen1s = pen=pg.mkPen(color='y', width=1, style=QtCore.Qt.DashLine)
+        self.pen1b = pen=pg.mkPen('y', width=1, style=QtCore.Qt.DotLine)
+        #self.pen1s = self.pen1
+        #self.pen1b = self.pen1
+        self.pen2  = pen=pg.mkPen('r', width=1)
+        #self.pen2s  = self.pen2
+        #self.pen2b  = self.pen2
+        self.pen2s = pen=pg.mkPen('r', width=1, style=QtCore.Qt.DashLine)
+        self.pen2b = pen=pg.mkPen('r', width=1, style=QtCore.Qt.DotLine)
         
         self.__PIDplots()
         self.__Fplots()
@@ -536,10 +547,10 @@ class Visualizer(object):
         self.PIDplot.setLabel('left', "PID voltage", units='mV')
         self.PIDplot.setLabel('bottom', "t", units='s')
         self.PIDplot.showGrid(False, True)
-        self.PIDcurves[0] = self.PIDplot.plot(self.t, self.df['svoc1'], pen=pg.mkPen('y', width=1)) #, style=QtCore.Qt.DashLine))
-        self.PIDcurves[1] = self.PIDplot.plot(self.t, self.df['voc1'], pen=pg.mkPen('y', width=1), name='PID1')
-        self.PIDcurves[2] = self.PIDplot.plot(self.t, self.df['svoc2'], pen=pg.mkPen('r', width=1)) #, style=QtCore.Qt.DashLine))
-        self.PIDcurves[3] = self.PIDplot.plot(self.t, self.df['voc2'], pen=pg.mkPen('r', width=1), name='PID2')
+        self.PIDcurves[0] = self.PIDplot.plot(self.t, self.df['svoc1'], pen=self.pen1s)
+        self.PIDcurves[1] = self.PIDplot.plot(self.t, self.df['voc1'], pen=self.pen1, name='PID1')
+        self.PIDcurves[2] = self.PIDplot.plot(self.t, self.df['svoc2'], pen=self.pen2s)
+        self.PIDcurves[3] = self.PIDplot.plot(self.t, self.df['voc2'], pen=self.pen2, name='PID2')
         
     def __Fplots(self):
         self.Fcurves = dict()
@@ -549,10 +560,10 @@ class Visualizer(object):
         self.Fplot.setLabel('left', "VOC Flow", units='lpm')
         self.Fplot.setLabel('bottom', "t", units='s')
         self.Fplot.showGrid(False, True)
-        self.Fcurves[0] = self.Fplot.plot(self.t, self.df['mfc1'], pen=pg.mkPen('y', width=1), name='MFC1')
-        self.Fcurves[1] = self.Fplot.plot(self.t, self.df['mfc2'], pen=pg.mkPen('r', width=1), name='MFC2')
+        self.Fcurves[0] = self.Fplot.plot(self.t, self.df['mfc1'], pen=self.pen1, name='MFC1')
+        self.Fcurves[1] = self.Fplot.plot(self.t, self.df['mfc2'], pen=self.pen2, name='MFC2')
         # currently the set variable does not exists
-        #self.Fcurves[3] = self.Fplot.plot(self.t, self.df['smfc2'], pen=pg.mkPen('r', width=1, style=QtCore.Qt.DashLine))
+        #self.Fcurves[3] = self.Fplot.plot(self.t, self.df['smfc2'], pen=self.pen2s)
 
     def __RHplots(self):
         self.RHcurves = dict()
@@ -561,8 +572,8 @@ class Visualizer(object):
         self.RHplot.setLabel('left', "Inlet rH", units='%')
         self.RHplot.setLabel('bottom', "t", units='s')
         self.RHplot.showGrid(False, True)
-        self.RHcurves[0] = self.RHplot.plot(self.t, self.df['sinrH'], pen=pg.mkPen('y', width=1)) #, style=QtCore.Qt.DashLine))
-        self.RHcurves[1] = self.RHplot.plot(self.t, self.df['inrH'], pen=pg.mkPen('y', width=1))
+        self.RHcurves[0] = self.RHplot.plot(self.t, self.df['sinrH'], pen=self.pen1s)
+        self.RHcurves[1] = self.RHplot.plot(self.t, self.df['inrH'], pen=self.pen1)
 
     def __Tplots(self):
         self.Tcurves = dict()
@@ -571,8 +582,8 @@ class Visualizer(object):
         self.Tplot.setLabel('left', "T", units='degC')
         self.Tplot.setLabel('bottom', "t", units='s')
         self.Tplot.showGrid(False, True)
-        self.Tcurves[0] = self.Tplot.plot(self.t, self.df['inT'], pen=pg.mkPen('y', width=1), name='Inlet')
-        self.Tcurves[1] = self.Tplot.plot(self.t, self.df['tbath'], pen=pg.mkPen('r', width=1), name='rH bath')
+        self.Tcurves[0] = self.Tplot.plot(self.t, self.df['inT'], pen=self.pen1, name='Inlet')
+        self.Tcurves[1] = self.Tplot.plot(self.t, self.df['tbath'], pen=self.pen2, name='rH bath')
 
     def __OFRplots(self):
         self.OFRTcurves = dict()
@@ -581,7 +592,7 @@ class Visualizer(object):
         self.OFRTplot.setLabel('left', "T", units='degC')
         self.OFRTplot.setLabel('bottom', "t", units='s')
         self.OFRTplot.showGrid(False, True)
-        self.OFRTcurves[0] = self.OFRTplot.plot(self.t, self.df['tuv'], pen=pg.mkPen('y', width=1))
+        self.OFRTcurves[0] = self.OFRTplot.plot(self.t, self.df['tuv'], pen=self.pen1)
 
         self.OFRUVcurves = dict()
         self.OFRUVplot = pg.PlotWidget()
@@ -589,7 +600,7 @@ class Visualizer(object):
         self.OFRUVplot.setLabel('left', "UV sensor", units='A')
         self.OFRUVplot.setLabel('bottom', "t", units='s')
         self.OFRUVplot.showGrid(False, True)
-        self.OFRUVcurves[0] = self.OFRUVplot.plot(self.t, self.df['iuv'], pen=pg.mkPen('y', width=1))
+        self.OFRUVcurves[0] = self.OFRUVplot.plot(self.t, self.df['iuv'], pen=self.pen1)
         
     def __TECplots(self):
         self.TECcurves = dict()
@@ -599,12 +610,12 @@ class Visualizer(object):
         self.TECplot.setLabel('left', "TEC Temp", units='degC')
         self.TECplot.setLabel('bottom', "t", units='s')
         self.TECplot.showGrid(False, True)
-        self.TECcurves[0] = self.TECplot.plot(self.t, self.df['sb1'], name='SP TEC 1', pen=pg.mkPen('y', width=1)) #, style=QtCore.Qt.DotLine))
-        self.TECcurves[1] = self.TECplot.plot(self.t, self.df['sb2'], name='SP TEC 2', pen=pg.mkPen('r', width=1)) #, style=QtCore.Qt.DotLine))
-        self.TECcurves[2] = self.TECplot.plot(self.t, self.df['tec1'], name='TEC 1', pen=pg.mkPen('y', width=1)) #, style=QtCore.Qt.DashLine))
-        self.TECcurves[3] = self.TECplot.plot(self.t, self.df['tec2'], name='TEC 2', pen=pg.mkPen('r', width=1)) #, style=QtCore.Qt.DashLine))
-        self.TECcurves[4] = self.TECplot.plot(self.t, self.df['b1'], pen=pg.mkPen('y', width=1), name='Bottle 1')
-        self.TECcurves[5] = self.TECplot.plot(self.t, self.df['b2'], pen=pg.mkPen('r', width=1), name='Bottle 2')
+        self.TECcurves[0] = self.TECplot.plot(self.t, self.df['sb1'],  name='SP TEC 1', pen=self.pen1b)
+        self.TECcurves[1] = self.TECplot.plot(self.t, self.df['sb2'],  name='SP TEC 2', pen=self.pen2b)
+        self.TECcurves[2] = self.TECplot.plot(self.t, self.df['tec1'], name='TEC 1',    pen=self.pen1s)
+        self.TECcurves[3] = self.TECplot.plot(self.t, self.df['tec2'], name='TEC 2',    pen=self.pen2s)
+        self.TECcurves[4] = self.TECplot.plot(self.t, self.df['b1'],   name='Bottle 1', pen=self.pen1)
+        self.TECcurves[5] = self.TECplot.plot(self.t, self.df['b2'],   name='Bottle 2', pen=self.pen2)
 
 
 
@@ -662,8 +673,8 @@ class Visualizer(object):
         self.PUMPplot.setLabel('left', "PID Flow", units='lpm')
         self.PUMPplot.setLabel('bottom', "t", units='s')
         self.PUMPplot.showGrid(False, True)
-        self.PUMPcurves[0] = self.PUMPplot.plot(self.t, self.df['flow1'], pen=pg.mkPen('y', width=1), name='PID1')
-        self.PUMPcurves[1] = self.PUMPplot.plot(self.t, self.df['flow2'], pen=pg.mkPen('r', width=1), name='PID2')
+        self.PUMPcurves[0] = self.PUMPplot.plot(self.t, self.df['flow1'], pen=self.pen1, name='PID1')
+        self.PUMPcurves[1] = self.PUMPplot.plot(self.t, self.df['flow2'], pen=self.pen2, name='PID2')
 
     def __PUMPwidgets(self):
         ## Create widgets for TEC commands
