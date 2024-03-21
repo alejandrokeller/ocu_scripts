@@ -90,11 +90,7 @@ class Visualizer(object):
         self.pen1  = pen=pg.mkPen('y', width=1)
         self.pen1s = pen=pg.mkPen(color='y', width=1, style=QtCore.Qt.DashLine)
         self.pen1b = pen=pg.mkPen('y', width=1, style=QtCore.Qt.DotLine)
-        #self.pen1s = self.pen1
-        #self.pen1b = self.pen1
         self.pen2  = pen=pg.mkPen('r', width=1)
-        #self.pen2s  = self.pen2
-        #self.pen2b  = self.pen2
         self.pen2s = pen=pg.mkPen('r', width=1, style=QtCore.Qt.DashLine)
         self.pen2b = pen=pg.mkPen('r', width=1, style=QtCore.Qt.DotLine)
         
@@ -208,10 +204,10 @@ class Visualizer(object):
         self.btnSERIAL.clicked.connect(self.sendSerialCMD)
         self.lblSERIAL     = QtWidgets.QLabel("Command:")
         self.lineSERIAL    = QtWidgets.QLineEdit()
-        #validator = QtGui.QRegExpValidator(QtCore.QRegExp("[abFpirRXzZ][0-9]{4}"))
-        #if self.device.model == 2:
-        #    validator = QtGui.QRegExpValidator(QtCore.QRegExp("[abFgHhuDpirRXzZ][0-9]{4}"))
-        #self.lineSERIAL.setValidator(validator)
+        validator = QtGui.QRegExpValidator(QtCore.QRegExp("[abFpirRXzZ][0-9]{4}"))
+        if self.device.model == 2:
+            validator = QtGui.QRegExpValidator(QtCore.QRegExp("[abFgHhuDpirRXzZ][0-9]{4}"))
+        self.lineSERIAL.setValidator(validator)
 
         ## Create widgets for TEC commands
         if self.device.model == 2:
