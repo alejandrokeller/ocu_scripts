@@ -1136,4 +1136,4 @@ if __name__ == '__main__':
     timer.start(int(vis.deltaT*1000))
 
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
-        QtWidgets.QApplication.instance().exec()
+        QtWidgets.QApplication.instance().exec_()
