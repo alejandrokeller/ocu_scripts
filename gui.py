@@ -630,7 +630,7 @@ class Visualizer(object):
         self.btnTEC1set.clicked.connect(self.setTEC1)
         self.lblTEC1       = QtWidgets.QLabel("TEC1 (degC):")
         self.spTEC1        = QtWidgets.QSpinBox()
-        self.spTEC1.setRange(0,80)
+        self.spTEC1.setRange(0,95)
 
         self.btnTEC2heat   = QtWidgets.QPushButton("heat")        # Turn TEC1 heat on or off
         self.btnTEC2heat.setFixedWidth(button_size)
@@ -644,7 +644,7 @@ class Visualizer(object):
         self.btnTEC2set.clicked.connect(self.setTEC2)
         self.lblTEC2       = QtWidgets.QLabel("TEC2 (degC):")
         self.spTEC2        = QtWidgets.QSpinBox()
-        self.spTEC2.setRange(0,80)
+        self.spTEC2.setRange(0,95)
 
         ## Create a grid layout to manage the TEC controls size and position
         self.tecControlLayout = QtWidgets.QGridLayout()
