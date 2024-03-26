@@ -631,7 +631,7 @@ class Visualizer(object):
         self.lblTEC1       = QtWidgets.QLabel("TEC1 (degC):")
         self.spTEC1        = QtWidgets.QSpinBox()
         self.spTEC1.setRange(0,95)
-        self.spTEC1.returnPressed.connect(self.setTEC1)
+        self.spTEC1.lineEdit().returnPressed.connect(self.setTEC1)
 
         self.btnTEC2heat   = QtWidgets.QPushButton("heat")        # Turn TEC1 heat on or off
         self.btnTEC2heat.setFixedWidth(button_size)
