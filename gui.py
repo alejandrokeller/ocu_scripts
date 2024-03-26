@@ -889,6 +889,9 @@ class Visualizer(object):
                     newDict.pop('tec2', None)
                     newDict.pop('tec1mode', None)
                     newDict.pop('tec2mode', None)
+                    
+                    #debug info
+                    #txtStatus ="{},{}, ".format(newData['status'],newData['tecbyte'])
 
                     ### check if tec response corresponds with status
                     if not (self.statusDict['tec1'] == self.tecDict['tec1']):
