@@ -3,7 +3,7 @@
 sleep 5m
 ./voc100.py
 sleep 15m
-./tvoc200.py
+./voc200.py
 sleep 15m
 ./voc100.py
 sleep 15m

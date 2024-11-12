@@ -82,7 +82,8 @@ class instrument(object):
             "G?", # Response: Status TEC1=0, TEC2=0, <ON>=Gx1!  <OFF>=Gx0!
             "H?", # Response: Status TEC1FAN=0, TEC2FAN=0, <ON>=Hx1!  <OFF>=Hx0!
             "Y?", # Response: TEC1:(1) TEC2:(1)  cool = Yn1! or heat = Yn2!
-            "W?"  # Response: REF_RES PT1=3998, PT2=3994, [Ohms]=Wnxxxx!
+            "W?", # Response: REF_RES PT1=3998, PT2=3994, [Ohms]=Wnxxxx!
+            "K?"  # Response: TypeKSensorOffset TEC1OFFSET=0, TEC2OFFSET=0 [milli Kelvin]
             ]
 
         if self.model == 2:
