@@ -1,3 +1,4 @@
+./rh0.py
 #sleep 15m
 ./rh95.py
 sleep 20m
