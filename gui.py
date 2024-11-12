@@ -168,6 +168,7 @@ class Visualizer(object):
         self.lblMFC2      = QtWidgets.QLabel("MFC2 (mlpm):")
         self.spMFC2       = QtWidgets.QSpinBox()
         self.spMFC2.setRange(0,100)
+        self.spMFC2.lineEdit().returnPressed.connect(self.setMFC2)
 
         ## Create widgets for controlling VOC1
         self.btnSVOC1      = QtWidgets.QPushButton(">>")  # Sends new MFC2 flow
@@ -177,6 +178,7 @@ class Visualizer(object):
         self.lblSVOC1      = QtWidgets.QLabel("VOC1 (mV):")
         self.spSVOC1       = QtWidgets.QSpinBox()
         self.spSVOC1.setRange(0,2500)
+        self.spSVOC1.lineEdit().returnPressed.connect(self.setSVOC1)
 
         ## Create widgets for controlling VOC Heater
         self.btnVOCT       = QtWidgets.QPushButton(">>")  # Sends new MFC2 flow
@@ -186,6 +188,8 @@ class Visualizer(object):
         self.lblVOCT       = QtWidgets.QLabel("VOC (degC):")
         self.spVOCT        = QtWidgets.QSpinBox()
         self.spVOCT.setRange(0,80)
+        self.spVOCT.lineEdit().returnPressed.connect(self.setVOCT)
+
         
         ## Create widgets for controlling rH
         self.btnRH         = QtWidgets.QPushButton(">>")  # Sends new MFC2 flow
@@ -196,6 +200,7 @@ class Visualizer(object):
         self.spRH        = QtWidgets.QSpinBox()
         self.spRH.setRange(0,95)
         self.lblBathT    = QtWidgets.QLabel("Bath (degC):") # tbath container
+        self.spRH.lineEdit().returnPressed.connect(self.setRH)
 
         ## Create widgets for serial commands
         self.btnSERIAL     = QtWidgets.QPushButton(">>")  # Sends new MFC2 flow
@@ -208,6 +213,7 @@ class Visualizer(object):
         if self.device.model == 2:
             validator = QtGui.QRegExpValidator(QtCore.QRegExp("[abFgHhuDpirRXzZ][0-9]{4}"))
         self.lineSERIAL.setValidator(validator)
+        self.lineSERIAL.returnPressed.connect(self.sendSerialCMD)
 
         ## Create widgets for TEC commands
         if self.device.model == 2:
@@ -630,7 +636,8 @@ class Visualizer(object):
         self.btnTEC1set.clicked.connect(self.setTEC1)
         self.lblTEC1       = QtWidgets.QLabel("TEC1 (degC):")
         self.spTEC1        = QtWidgets.QSpinBox()
-        self.spTEC1.setRange(0,80)
+        self.spTEC1.setRange(0,95)
+        self.spTEC1.lineEdit().returnPressed.connect(self.setTEC1)
 
         self.btnTEC2heat   = QtWidgets.QPushButton("heat")        # Turn TEC1 heat on or off
         self.btnTEC2heat.setFixedWidth(button_size)
@@ -644,7 +651,8 @@ class Visualizer(object):
         self.btnTEC2set.clicked.connect(self.setTEC2)
         self.lblTEC2       = QtWidgets.QLabel("TEC2 (degC):")
         self.spTEC2        = QtWidgets.QSpinBox()
-        self.spTEC2.setRange(0,80)
+        self.spTEC2.setRange(0,95)
+        self.spTEC2.lineEdit().returnPressed.connect(self.setTEC2)
 
         ## Create a grid layout to manage the TEC controls size and position
         self.tecControlLayout = QtWidgets.QGridLayout()
@@ -682,6 +690,7 @@ class Visualizer(object):
         self.lblPUMP1       = QtWidgets.QLabel("PID1 (mlpm):")
         self.spPUMP1        = QtWidgets.QSpinBox()
         self.spPUMP1.setRange(150,500)
+        self.spPUMP1.lineEdit().returnPressed.connect(self.setPUMP1)
 
         self.btnPUMP2set    = QtWidgets.QPushButton(">>")          # Sends new PUMP2 setpoint
         self.btnPUMP2set.setFixedWidth(self.button_size)
@@ -689,7 +698,8 @@ class Visualizer(object):
         self.btnPUMP2set.clicked.connect(self.setPUMP2)
         self.lblPUMP2       = QtWidgets.QLabel("PID2 (mlpm):")
         self.spPUMP2        = QtWidgets.QSpinBox()
-        self.spPUMP2.setRange(150,500)        
+        self.spPUMP2.setRange(150,500)
+        self.spPUMP2.lineEdit().returnPressed.connect(self.setPUMP2)
 
         ## Create a grid layout to manage the TEC controls size and position
         self.pumpControlLayout = QtWidgets.QGridLayout()
@@ -888,6 +898,9 @@ class Visualizer(object):
                     newDict.pop('tec2', None)
                     newDict.pop('tec1mode', None)
                     newDict.pop('tec2mode', None)
+                    
+                    #debug info
+                    #txtStatus ="{},{}, ".format(newData['status'],newData['tecbyte'])
 
                     ### check if tec response corresponds with status
                     if not (self.statusDict['tec1'] == self.tecDict['tec1']):
